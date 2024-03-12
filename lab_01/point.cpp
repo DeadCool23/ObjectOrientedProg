@@ -29,6 +29,15 @@ static void move_to_rel_center(point_t &point, const point_t &rel_center) {
     move_point(point, mover);
 }
 
+static void move_to_abs_center(point_t &point, const point_t &rel_center) {
+    move_coefs_t mover = {
+        .dx = rel_center.x,
+        .dy = rel_center.y,
+        .dz = rel_center.z,
+    };
+    move_point(point, mover);
+}
+
 void scale_point(point_t &point, const scale_coefs_t &scaler, const point_t &rel_center) {
     // (кол-во операций нужно сокращать)
     // point.x = point.x * scaler.kx + rel_center.x * (1 - scaler.kx);
@@ -37,6 +46,7 @@ void scale_point(point_t &point, const scale_coefs_t &scaler, const point_t &rel
     point.x *= scaler.kx;
     point.y *= scaler.ky;
     point.z *= scaler.kz;
+    move_to_abs_center(point, rel_center);
 }
 
 static double degree2radians(double ang) { return ang * M_PI / 180; }
@@ -82,4 +92,5 @@ void rotate_point(point_t &point, const rotate_coefs_t &rotater, const point_t &
     x_rotate(point, rotater.ox);
     y_rotate(point, rotater.oy);
     z_rotate(point, rotater.oz);
+    move_to_abs_center(point, rel_center);
 }
