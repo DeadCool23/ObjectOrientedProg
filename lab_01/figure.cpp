@@ -9,7 +9,6 @@ figure_t figure_init(void) {
 }
 
 static void mv_figure(figure_t &dst, const figure_t &src) {
-    delete_figure(dst);
     dst = src;
 }
 
@@ -32,16 +31,18 @@ static errs_t fload_figure(figure_t &figure, FILE *file) {
 errs_t load_figure(figure_t &figure, const char *in_file) {
     errs_t err = OK;
 
-    figure_t tmp_figure = figure_init();
     FILE *file = fopen(in_file, "r");
     if (!file)
         err = file_stdErrs2projErrs();
     else {
+        figure_t tmp_figure = figure_init();
         err = fload_figure(tmp_figure, file);
         fclose(file);
 
-        if (!err)
+        if (!err) {
+            delete_figure(figure);
             mv_figure(figure, tmp_figure);
+        }
     }
     return err;
 }
