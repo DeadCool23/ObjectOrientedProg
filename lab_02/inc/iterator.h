@@ -34,9 +34,6 @@ public:
     Iterator& operator++();
     Iterator operator++(int);
 
-    Iterator& operator+(size_t index);
-    Iterator& operator+=(size_t index);
-
     difference_type distance(const Iterator<T>& other) const;
 private:
     void next(void);

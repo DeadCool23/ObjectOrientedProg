@@ -66,4 +66,10 @@ class PointerError: public BaseError {
         : BaseError(filename, classname, line, time, info) {};
 };
 
+class IteratorError: public BaseError {
+    public:
+        IteratorError(std::string filename, std::string classname, int line, const char *time, std::string info = "Iter")
+        : BaseError(filename, classname, line, time, info) {};
+};
+
 #endif // __ERRORS_H__

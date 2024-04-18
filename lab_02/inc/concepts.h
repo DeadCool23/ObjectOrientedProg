@@ -42,19 +42,35 @@ concept Comparable = requires (T a, T b) {
 
 template<typename T, typename U>
 concept Convertable = requires (T a, U b) {
-    T(b); U(a);
+    { T(b) } -> std::same_as<T>; 
+    { U(a) } -> std::same_as<U>;
+};
+
+template<typename T>
+concept Incrementable = requires (T a) {
+    { a++ } -> std::same_as<T>;
+    { ++a } -> std::same_as<T&>;
 };
 
 template <typename C>
 concept ContainerClass = requires (C c) {
-    c.size();
-    c.begin(); c.end();
-    {C()} -> std::same_as<C>;
+    typename C::value_type;
+    typename C::syze_type;
+    typename C::iterator_type;
+    typename C::const_iterator_type;
+
+    { c.size() } -> std::same_as<typename C::value_type>;
+    { c.begin() } -> std::same_as<typename C::iterator_type>;
+    { c.end() } -> std::same_as<typename C::const_iterator_type>;
+};
+
+template <typename Iter, typename T>
+concept IteratorCheck = Incrementable<Iter> && Comparable<Iter> && 
+requires (Iter it) {
+    { *it } -> std::convertible_to<const T&>;
 };
 
 template <typename T>
-concept Printable = requires (T a, std::ostream os) {
-    os << a;
-};
+concept Printable = requires (T a, std::ostream os) { os << a; };
 
 #endif // __CONCEPTS_HPP__

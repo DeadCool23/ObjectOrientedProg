@@ -29,9 +29,6 @@ public:
     ConstIterator& operator++();
     ConstIterator operator++(int);
 
-    ConstIterator& operator+(size_t index);
-    ConstIterator& operator+=(size_t index);
-
     difference_type distance(const ConstIterator<T>& other) const;
 private:
     void next(void);

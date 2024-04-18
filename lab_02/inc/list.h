@@ -45,8 +45,11 @@ public:
     List(const C<U> &container);
 
 
-    List(List &&list);
-    explicit List(const List &list);
+    List(List<T> &&list);
+    explicit List(const List<T> &list);
+    template <typename U>
+    requires Convertable<T, U>
+    explicit List(const List<U> &list);
 
     bool is_empty() const override;
     size_t size(void) const override;
@@ -74,8 +77,6 @@ public:
     void insert(size_t index, const T &value);
 
     void remove(const T &value);
-    void remove(ListNode<T> &node);
-    void remove(std::shared_ptr<ListNode<T>> &node);
 
     void each(std::function<T(const T &value)> func);
 
@@ -84,6 +85,9 @@ public:
 
     List<T> &operator=(List<T> &&list);
     List<T> &operator=(const List<T> &list);
+    template<typename U>
+    requires Convertable<T, U>
+    List<T> &operator=(const List<U> &list);
 
     List<T> &operator*(const T& multer);
     List<T> &operator*=(const T& multer);
@@ -100,6 +104,14 @@ public:
     template<typename U>
     requires Convertable<T, U>
     List<T> &operator+=(const List<U> &add_list);
+
+    template<typename U>
+    requires Convertable<T, U>
+    bool operator==(const List<U> &add_list);
+
+    template<typename U>
+    requires Convertable<T, U>
+    bool operator!=(const List<U> &add_list);
 
     void print(void) const noexcept;
     void debug_print(void) const noexcept;

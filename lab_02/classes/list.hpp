@@ -93,6 +93,16 @@ List<T>::List(const List<T> &list) {
     for (const auto &value : list)
         this->push_back(value);
 }
+
+template <typename T>
+template <typename U>
+requires Convertable<T, U>
+List<T>::List(const List<U> &list) {
+    for (const auto &value : list)
+        this->push_back(T(value));
+}
+
+
 #pragma endregion
 
 #pragma region Methods
@@ -343,16 +353,6 @@ void List<T>::remove(const T &value) {
     if (!is_del)
         throw NoValueError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 }
-template<typename T>
-void List<T>::remove(ListNode<T> &node) { this->remove(node.get_value()); }
-
-template<typename T>
-void List<T>::remove(std::shared_ptr<ListNode<T>> &node) {
-    time_t now = time(NULL);
-    if (!node)
-        throw PointerError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
-    this->remove(*node); 
-}
 
 // --- Операции ---
 template<typename T>
@@ -428,6 +428,30 @@ template<typename T>
 template<typename U>
 requires Convertable<T, U>
 List<T> &List<T>::operator+=(const List<U> &add_list) { return *this + add_list; }
+
+template<typename T>
+requires Comparable<T>
+template<typename U>
+requires Convertable<T, U>
+bool List<T>::operator==(const List<U> &add_list) {
+    bool is_equal = true;
+    if (this->size() != add_list.size())
+        is_equal = false;
+
+    for (size_t i = 0; is_equal && i < this->_size; ++i)
+        if ((*this)[i] != T(add_list[i]))
+            is_equal = false;
+    
+    return is_equal;
+}
+
+template<typename T> 
+requires Comparable<T>
+template<typename U>
+requires Convertable<T, U>
+bool List<T>::operator!=(const List<U> &add_list) {
+    return !(*this == add_list);
+}
 
 // --- Печать ---
 

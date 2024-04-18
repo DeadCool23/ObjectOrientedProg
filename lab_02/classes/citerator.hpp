@@ -30,6 +30,9 @@ ConstIterator<T>::operator bool() const {
 
 template<typename T>
 void ConstIterator<T>::next(void) {
+    time_t now = time(NULL);
+    if (index >= size || !this->ptr.lock())
+        throw IteratorError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
     this->ptr = this->ptr.lock()->get_next();
     ++this->index;
 }
@@ -46,28 +49,6 @@ ConstIterator<T> ConstIterator<T>::operator++(int) {
     auto ret_ptr = *this;
     this->next();
     return ret_ptr;
-}
-
-template<typename T>
-ConstIterator<T>& ConstIterator<T>::operator+(size_t index) {
-    time_t now = time(NULL);
-    if (index >= this->size)
-        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
-
-    for (size_t i = 0; i < index; ++i)
-        this->next();
-    return *this;
-}
-
-template<typename T>
-ConstIterator<T>& ConstIterator<T>::operator+=(size_t index) {
-    time_t now = time(NULL);
-    if (index >= this->size)
-        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
-
-    for (size_t i = 0; i < index; ++i)
-        this->next();
-    return *this;
 }
 
 template<typename T>
