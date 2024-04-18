@@ -34,7 +34,6 @@ template <typename T>
 template <template<typename> class C>
 requires ContainerClass<C<T>>
 List<T>::List(const C<T> &container) {
-    this->_size = container.size();
     for (const auto &value : container)
         this->push_back(value);
 }
@@ -43,7 +42,6 @@ template <typename T>
 template <typename U, template<typename> class C>
 requires ContainerClass<C<U>> && Convertable<T, U>
 List<T>::List(const C<U> &container) {
-    this->_size = container.size();
     for (const auto &value : container)
         this->push_back(T(value));
 }
@@ -82,6 +80,26 @@ List<T>::List(const citerator_t &beg, const citerator_t &end, size_t count) {
         this->push_back(*it);
 }
 
+template <typename T>
+template<typename Iter>
+requires IteratorCheck<Iter, T>
+List<T>::List(const Iter &beg, const Iter &end) {
+    size_t i = 0;
+    for (auto it = beg; it != end; ++it)
+        this->push_back(*it);
+}
+template <typename T>
+template<typename Iter>
+requires IteratorCheck<Iter, T>
+List<T>::List(const Iter &beg, const Iter &end, size_t count) {
+    time_t now = time(NULL);
+    if (beg.distance(end) < ConstIterator<T>::difference_type(count))
+        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
+    
+    size_t i = 0;
+    for (auto it = beg; i++ < count && it != end; ++it)
+        this->push_back(*it);
+}
 
 template <typename T>
 List<T>::List(List<T> &&list) : head(list.head), tail(list.tail) {
@@ -380,11 +398,12 @@ List<T> &List<T>::operator=(const List<T> &list) {
 
 template<typename T>
 requires Multable<T>
-List<T> &List<T>::operator*(const T& multer) {
+List<T> List<T>::operator*(const T& multer) {
+    List<T> res;
     for (auto &value : *this)
-        value *= multer;
+        res.push_back(value * multer);
 
-    return *this;
+    return res;
 }
 
 template<typename T>
@@ -393,13 +412,14 @@ List<T> &List<T>::operator*=(const T& multer) { return *this * multer; }
 
 template<typename T>
 requires Divable<T> && Comparable<T>
-List<T> &List<T>::operator/(const T& diver) {
+List<T> List<T>::operator/(const T& diver) {
     time_t now = time(NULL);
     if (diver == T(0)) throw LogicError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
+    List<T> res;
     for (auto &value : *this)
-        value /= diver;
+        res.push_back(value / diver);
 
-    return *this;
+    return res;
 }
 template<typename T>
 requires Divable<T> && Comparable<T> && Neitral<T>
@@ -407,27 +427,37 @@ List<T> &List<T>::operator/=(const T& diver) { return *this / diver; }
 
 
 template<typename T>
-List<T> &List<T>::operator+(const List<T> &add_list) {
-    this->push_back(add_list);
+List<T> List<T>::operator+(const List<T> &add_list) {
+    List<T> tmp;
+    tmp.push_back(*this);  
+    tmp.push_back(add_list);  
+    return tmp;
+}
+
+template<typename T>
+template<typename U>
+requires Convertable<T, U>
+List<T> List<T>::operator+(const List<U> &add_list) {
+    List<T> tmp;
+    tmp.push_back(*this);  
+    tmp.push_back(add_list);  
+    return tmp;
+}
+
+
+template<typename T>
+List<T> &List<T>::operator+=(const List<T> &add_list) { 
+    *this = *this + add_list;
     return *this;
 }
 
 template<typename T>
 template<typename U>
 requires Convertable<T, U>
-List<T> &List<T>::operator+(const List<U> &add_list) {
-    this->push_back(add_list);
+List<T> &List<T>::operator+=(const List<U> &add_list) {
+    *this = *this + add_list;
     return *this;
 }
-
-
-template<typename T>
-List<T> &List<T>::operator+=(const List<T> &add_list) { return *this + add_list; }
-
-template<typename T>
-template<typename U>
-requires Convertable<T, U>
-List<T> &List<T>::operator+=(const List<U> &add_list) { return *this + add_list; }
 
 template<typename T>
 requires Comparable<T>

@@ -25,7 +25,7 @@ Iterator<T>::reference Iterator<T>::operator*() {
 
 template<typename T>
 Iterator<T>::operator bool() const {
-    return this->ptr.lock() == nullptr;
+    return this->ptr.lock() != nullptr;
 }
 
 template<typename T>

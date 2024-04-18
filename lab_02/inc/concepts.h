@@ -55,13 +55,18 @@ concept Incrementable = requires (T a) {
 template <typename C>
 concept ContainerClass = requires (C c) {
     typename C::value_type;
-    typename C::syze_type;
-    typename C::iterator_type;
-    typename C::const_iterator_type;
+    typename C::size_type;
+    
+    typename C::iterator;
+    typename C::const_iterator;
 
-    { c.size() } -> std::same_as<typename C::value_type>;
-    { c.begin() } -> std::same_as<typename C::iterator_type>;
-    { c.end() } -> std::same_as<typename C::const_iterator_type>;
+    { c.begin() } noexcept -> std::same_as<typename C::iterator>;
+    { c.end() } noexcept -> std::same_as<typename C::iterator>;
+
+    { c.cend() } noexcept -> std::same_as<typename C::const_iterator>;
+    { c.cbegin() } noexcept -> std::same_as<typename C::const_iterator>;
+    
+    { c.size() } noexcept -> std::same_as<typename C::size_type>;
 };
 
 template <typename Iter, typename T>

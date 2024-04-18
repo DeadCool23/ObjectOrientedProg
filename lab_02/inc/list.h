@@ -36,6 +36,13 @@ public:
     List(const citerator_t &beg, const citerator_t &end);
     List(const citerator_t &beg, const citerator_t &end, size_t count);
 
+    template<typename Iter>
+    requires IteratorCheck<Iter, T>
+    List(const Iter &begin, const Iter &end);
+    template<typename Iter>
+    requires IteratorCheck<Iter, T>
+    List(const Iter &begin, const Iter &end, size_t count);
+
     template <template<typename> class C>
     requires ContainerClass<C<T>>
     List(const C<T> &container);
@@ -89,16 +96,16 @@ public:
     requires Convertable<T, U>
     List<T> &operator=(const List<U> &list);
 
-    List<T> &operator*(const T& multer);
+    List<T> operator*(const T& multer);
     List<T> &operator*=(const T& multer);
 
-    List<T> &operator/(const T& diver);
+    List<T> operator/(const T& diver);
     List<T> &operator/=(const T& diver);
 
-    List<T> &operator+(const List<T> &add_list);
+    List<T> operator+(const List<T> &add_list);
     template<typename U>
     requires Convertable<T, U>
-    List<T> &operator+(const List<U> &add_list);
+    List<T> operator+(const List<U> &add_list);
     
     List<T> &operator+=(const List<T> &add_list);
     template<typename U>
