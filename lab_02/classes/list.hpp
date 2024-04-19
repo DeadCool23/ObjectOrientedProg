@@ -437,41 +437,6 @@ List<T> &List<T>::operator=(const List<T> &list) {
 }
 
 template<typename T>
-requires Multable<T>
-List<T> List<T>::operator*(const T& multer) {
-    List<T> res(*this);
-    std::transform(this->begin(), this->end(), res.begin(), [&](const T &val) { return val * multer; });
-
-    return res;
-}
-
-template<typename T>
-requires Multable<T>
-List<T> &List<T>::operator*=(const T& multer) {
-    std::transform(this->begin(), this->end(), this->begin(), [&](const T &val) { return val * multer; });
-    return *this; 
-}
-
-template<typename T>
-requires Neitral<T> && Divable<T> && Comparable<T>
-List<T> List<T>::operator/(const T& diver) {
-    List<T> res(*this);
-    std::transform(this->begin(), this->end(), res.begin(), [&](const T &val) { return val / diver; });
-
-    return res;
-}
-template<typename T>
-requires Divable<T> && Comparable<T> && Neitral<T>
-List<T> &List<T>::operator/=(const T& diver) {
-    time_t now = time(NULL);
-    if (diver == T(0)) throw LogicError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
-
-    std::transform(this->begin(), this->end(), this->begin(), [&](const T &val) { return val / diver; });
-    return *this / diver; 
-}
-
-
-template<typename T>
 List<T> List<T>::operator+(const List<T> &add_list) {
     List<T> tmp;
     tmp.push_back(*this);  
@@ -526,6 +491,11 @@ template<typename U>
 requires Convertable<T, U>
 bool List<T>::operator!=(const List<U> &add_list) {
     return !(*this == add_list);
+}
+
+template<typename T> 
+auto List<T>::operator<=>(const List<T>& other) const {
+    return _size <=> other._size;
 }
 
 // --- Печать ---

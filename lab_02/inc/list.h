@@ -16,8 +16,7 @@
 
 template <typename T>
 requires Comparable<T> && EmptyConstructable<T> &&
-         Divable<T> && Multable<T> && 
-         Neitral<T> && Printable<T>
+         Divable<T> && Multable<T> && Printable<T>
 class List : public Container {
 public:
     using value_type = T;
@@ -102,12 +101,6 @@ public:
     requires Convertable<T, U>
     List<T> &operator=(const List<U> &list);
 
-    List<T> operator*(const T& multer);
-    List<T> &operator*=(const T& multer);
-
-    List<T> operator/(const T& diver);
-    List<T> &operator/=(const T& diver);
-
     List<T> operator+(const List<T> &add_list);
     template<typename U>
     requires Convertable<T, U>
@@ -125,6 +118,8 @@ public:
     template<typename U>
     requires Convertable<T, U>
     bool operator!=(const List<U> &add_list);
+
+    auto operator<=>(const List<T>& other) const;
 
     void print(void) const noexcept;
     void debug_print(void) const noexcept;
