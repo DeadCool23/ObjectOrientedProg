@@ -148,13 +148,16 @@ T& List<T>::operator[](size_t ind) {
 
 template<typename T>
 const T& List<T>::operator[](size_t ind) const {
-    auto it = std::find_if(this->begin(), this->end(), [current_index = size_t{0}, target_index = ind](auto& value) mutable {
-        return current_index++ == target_index;
-    });
-
     time_t now = time(NULL);
-    if (!it) return *it;
-    else throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
+    if (ind >= _size)
+        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
+
+    size_t i = 0;
+    for (auto &value : *this) {
+        if (ind == i)
+            return value;
+        ++i;
+    }
 }
 
 // --- Пушеры ---
