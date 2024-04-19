@@ -2,14 +2,14 @@
 #define __CITERATOR_HPP__
 
 template<typename T>
-ConstIterator<T>::ConstIterator(const std::shared_ptr<ListNode<T>> &node, size_t size, size_t ind) {
+ConstIterator<T>::ConstIterator(const std::shared_ptr<typename ConstIterator<T>::ListNode> &node, size_t size, size_t ind) {
     ptr = node;
     this->size = size;
     this->index = ind;
 }
 
 template<typename T>
-bool ConstIterator<T>::operator == (ConstIterator const& other) const {
+bool ConstIterator<T>::operator == (const ConstIterator<T> &other) const {
     return this->ptr.lock() == other.ptr.lock();
 }
 

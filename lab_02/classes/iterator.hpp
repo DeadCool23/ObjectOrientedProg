@@ -2,14 +2,14 @@
 #define __ITERATOR_HPP__
 
 template<typename T>
-Iterator<T>::Iterator(const std::shared_ptr<ListNode<T>> &node, size_t size, size_t ind) {
+Iterator<T>::Iterator(const std::shared_ptr<typename List<T>::ListNode> &node, size_t size, size_t ind) {
     this->ptr = node;
     this->size = size;
     this->index = ind;
 }
 
 template<typename T>
-bool Iterator<T>::operator == (Iterator const& other) const {
+bool Iterator<T>::operator == (const Iterator<T> &other) const {
     return this->ptr.lock() == other.ptr.lock();
 }
 

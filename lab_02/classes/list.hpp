@@ -1,9 +1,8 @@
 #ifndef __LIST_HPP__
 #define __LIST_HPP__
 
-#include "concepts.h"
-
 #include <iostream>
+#include "concepts.h"
 
 #pragma GCC diagnostic ignored "-Wreturn-type"
 
@@ -304,7 +303,7 @@ template<typename T>
 void List<T>::reverse(void) noexcept {
     auto current = head;
     auto prev_head = head;
-    std::shared_ptr<ListNode<T>> prev = nullptr;
+    std::shared_ptr<List<T>::ListNode> prev = nullptr;
 
     while (current) {
         auto next = current->get_next();
@@ -342,9 +341,50 @@ void List<T>::insert(size_t index, const T &value) {
         auto cur = this->head;
         for (size_t i = 0; i < index - 1; ++i, cur = cur->get_next());
 
-        std::shared_ptr<ListNode<T>> new_node = NodeAlloc(value);
+        std::shared_ptr<List<T>::ListNode> new_node = NodeAlloc(value);
         new_node->set_next(cur->get_next());
         cur->set_next(new_node);
+    }
+}
+
+template<typename T>
+void List<T>::insert(size_t index, const List<T> &list) {
+    time_t now = time(NULL);
+    if (index > this->_size && index < 0)
+        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
+
+    if (!index) {
+        this->push_front(list);
+    } else if (index == _size) {
+        this->push_back(list);
+    } else {
+        auto cur = this->head;
+        for (size_t i = 0; i < index - 1; ++i, cur = cur->get_next());
+
+        List<T> new_tree = List(list);
+        new_tree->get_tail()->set_next(cur->get_next());
+        cur->set_next(new_tree);
+    }
+}
+template<typename T>
+template<typename U>
+requires Convertable<T, U>
+void List<T>::insert(size_t index, const List<U> &list) {
+    time_t now = time(NULL);
+    if (index > this->_size && index < 0)
+        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
+
+    if (!index) {
+        this->push_front(list);
+    } else if (index == _size) {
+        this->push_back(list);
+    } else {
+        auto cur = this->head;
+        for (size_t i = 0; i < index - 1; ++i, cur = cur->get_next());
+
+        List<T> new_tree = List(list);
+        new_tree->get_tail()->set_next(cur->get_next());
+        cur->set_next(new_tree);
     }
 }
 
@@ -374,7 +414,7 @@ void List<T>::remove(const T &value) {
 
 // --- Операции ---
 template<typename T>
-void List<T>::each(std::function<T(const T &value)> func) {
+void List<T>::each(const std::function<T(const T &value)> &func) {
     for (auto &value : *this)
         value = func(value);
 }
@@ -509,12 +549,12 @@ void List<T>::debug_print(void) const noexcept {
 /* ------------------------- Получение Итераторов -------------------------- */
 
 template<typename T>
-List<T>::iterator_t List<T>::begin(void) { return Iterator(head, _size); }
+List<T>::iterator_t List<T>::begin(void) { return Iterator<T>(head, _size); }
 
 template<typename T>
 List<T>::iterator_t List<T>::end(void) {
     auto end_ptr = tail->get_next();
-    return Iterator(end_ptr, _size, _size); 
+    return Iterator<T>(end_ptr, _size, _size); 
 }
 
 template<typename T>
@@ -523,32 +563,32 @@ List<T>::citerator_t List<T>::cbegin(void) const { return begin(); }
 template<typename T>
 List<T>::citerator_t List<T>::cend(void) const { return end(); }
 
+template<typename T>
+List<T>::citerator_t List<T>::begin(void) const { return ConstIterator<T>(head, _size); }
+
+template<typename T>
+List<T>::citerator_t List<T>::end(void) const {
+    auto end_ptr = tail->get_next();
+    return ConstIterator<T>(end_ptr, _size, _size); 
+}
+
 #pragma endregion
 
 #pragma region ProtectedMethods
 
 template<typename T>
-List<T>::citerator_t List<T>::begin(void) const { return ConstIterator(head, _size); }
-
+std::shared_ptr<typename List<T>::ListNode> List<T>::get_head(void) { return head; }
 template<typename T>
-List<T>::citerator_t List<T>::end(void) const {
-    auto end_ptr = tail->get_next();
-    return ConstIterator(end_ptr, _size, _size); 
-}
-
-template<typename T>
-std::shared_ptr<ListNode<T>> List<T>::get_head(void) { return head; }
-template<typename T>
-std::shared_ptr<ListNode<T>> List<T>::get_tail(void) { return tail; }
+std::shared_ptr<typename List<T>::ListNode> List<T>::get_tail(void) { return tail; }
 
 // Выделение памяти под Узел
 template<typename T>
-std::shared_ptr<ListNode<T>> List<T>::NodeAlloc(const T &value) {
-    std::shared_ptr<ListNode<T>> new_node = nullptr;
+std::shared_ptr<typename List<T>::ListNode> List<T>::NodeAlloc(const T &value) {
+    std::shared_ptr<List<T>::ListNode> new_node = nullptr;
 
     time_t now = time(NULL);
     try {
-        new_node = std::make_shared<ListNode<T>>(value);
+        new_node = std::make_shared<List<T>::ListNode>(value);
     } catch (std::bad_alloc &e) {
         throw MemError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
     }

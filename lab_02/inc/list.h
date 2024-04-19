@@ -5,25 +5,27 @@
 
 #include "concepts.h"
 
-#include "listnode.h"
 #include "container.h"
 
 #include "iterator.h"
 #include "citerator.h"
 
+#include <memory>
 #include <functional>
 #include <initializer_list>
 
 template <typename T>
-requires Comparable<T> && 
+requires Comparable<T> && Empty<T> &&
          Divable<T> && Multable<T> && 
          Neitral<T> && Printable<T>
-class List final : public Container {
+class List : public Container {
 public:
     using value_t = T;
     using iterator_t = Iterator<T>;
     using citerator_t = ConstIterator<T>;
 
+    friend class Iterator<T>;
+    friend class ConstIterator<T>;
 public:
     List(void);
     explicit List(const T &value);
@@ -45,11 +47,11 @@ public:
 
     template <template<typename> class C>
     requires ContainerClass<C<T>>
-    List(const C<T> &container);
+    explicit List(const C<T> &container);
 
     template <typename U, template<typename> class C>
     requires ContainerClass<C<U>> && Convertable<T, U>
-    List(const C<U> &container);
+    explicit List(const C<U> &container);
 
 
     List(List<T> &&list);
@@ -82,10 +84,14 @@ public:
     bool find(const T &find_value) const noexcept;
 
     void insert(size_t index, const T &value);
+    void insert(size_t index, const List<T> &list);
+    template<typename U>
+    requires Convertable<T, U>
+    void insert(size_t index, const List<U> &list);
 
     void remove(const T &value);
 
-    void each(std::function<T(const T &value)> func);
+    void each(const std::function<T(const T &value)> &func);
 
     T& operator[](size_t ind);
     const T& operator[](size_t ind) const;
@@ -126,25 +132,61 @@ public:
     iterator_t begin(void);
     iterator_t end(void);
 
+    citerator_t begin(void) const;
+    citerator_t end(void) const;
+
     citerator_t cbegin(void) const;
     citerator_t cend(void) const;
 
     ~List() = default;
 
 protected:
-    citerator_t begin(void) const;
-    citerator_t end(void) const;
+    class ListNode {
+        friend class Iterator<T>;
+        friend class ConstIterator<T>;
+    public:
+        ListNode(void);
+        ListNode(const T &val);
+        ListNode(ListNode &node);
+        ListNode(ListNode &&node);
+        ListNode(std::shared_ptr<ListNode> &node);
 
-    std::shared_ptr<ListNode<T>> get_head(void);
-    std::shared_ptr<ListNode<T>> get_tail(void);
+        void set_value(const T &val);
+        void set_next(ListNode &node);
+        void set_next(const std::shared_ptr<ListNode> &node);
 
-    std::shared_ptr<ListNode<T>> NodeAlloc(const T &value);
+        void set_next_null(void);
+
+        T& get_ref(void);
+        const T& get_value(void) const;
+
+        std::shared_ptr<ListNode> get_next(void) const;
+
+        bool operator == (const ListNode &node) const;
+        bool operator != (const ListNode &node) const;
+
+        bool operator == (const std::shared_ptr<ListNode> &node) const;
+        bool operator != (const std::shared_ptr<ListNode> &node) const;
+
+        ~ListNode() = default;
+
+    private:
+        T value;
+        std::shared_ptr<ListNode> next;
+    };
+
+protected:
+    std::shared_ptr<ListNode> get_head(void);
+    std::shared_ptr<ListNode> get_tail(void);
+
+    std::shared_ptr<ListNode> NodeAlloc(const T &value);
 
 private:
-    std::shared_ptr<ListNode<T>> head;
-    std::shared_ptr<ListNode<T>> tail;
+    std::shared_ptr<ListNode> head;
+    std::shared_ptr<ListNode> tail;
 };
 
 #include "list.hpp"
+#include "listnode.hpp"
 
 #endif // __LIST_H__

@@ -4,8 +4,14 @@
 #include <memory>
 #include <iterator>
 
-#include "listnode.h"
+#include "concepts.h"
 #include "base_iterator.h"
+
+template <typename T>
+requires Comparable<T> && Empty<T> &&
+         Divable<T> && Multable<T> && 
+         Neitral<T> && Printable<T>
+class List;
 
 template <typename T>
 class ConstIterator : public BaseIterator {
@@ -16,9 +22,10 @@ public:
     using difference_type = size_t;
     using iterator_category = std::forward_iterator_tag;
 
+    using ListNode = List<T>::ListNode;
 public:
-    ConstIterator(const ConstIterator& iter) = default;
-    ConstIterator(const std::shared_ptr<ListNode<T>> &node, size_t size, size_t ind = 0);
+    ConstIterator(const ConstIterator<T>& iter) = default;
+    ConstIterator(const std::shared_ptr<ListNode> &node, size_t size, size_t ind = 0);
 
     bool operator == (ConstIterator const& other) const;
 
@@ -34,7 +41,7 @@ private:
     void next(void);
 
 private:
-    std::weak_ptr<ListNode<T>> ptr;
+    std::weak_ptr<ListNode> ptr;
 };
 
 #include "citerator.hpp"

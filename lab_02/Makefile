@@ -18,4 +18,4 @@ clean:
 	rm -f $(TARGET)
 
 $(TARGET): $(SRC)/$(MAIN)
-	$(CC) $(FLAGS) $^ -o $@ $(CLASSES_PATH)
+	$(CC) $(FLAGS) $< -o $@ $(CLASSES_PATH)

@@ -3,68 +3,68 @@
 
 template<typename T>
 requires Empty<T>
-ListNode<T>::ListNode(void) : value(T()), next(nullptr) {}
+List<T>::ListNode::ListNode(void) : value(T()), next(nullptr) {}
 
 template<typename T>
-ListNode<T>::ListNode(const T &val) : value(val), next(nullptr) {}
+List<T>::ListNode::ListNode(const T &val) : value(val), next(nullptr) {}
 
 template<typename T>
-ListNode<T>::ListNode(ListNode<T> &node) :value(node), next(node.next) {}
+List<T>::ListNode::ListNode(List<T>::ListNode &node) :value(node), next(node.next) {}
 
 template<typename T>
-ListNode<T>::ListNode(ListNode<T> &&node) : value(node.next), next(node.next) {}
+List<T>::ListNode::ListNode(List<T>::ListNode &&node) : value(node.next), next(node.next) {}
 
 template<typename T>
-ListNode<T>::ListNode(std::shared_ptr<ListNode<T>> &node) {
+List<T>::ListNode::ListNode(std::shared_ptr<List<T>::ListNode> &node) {
     this->value = node->value;
     this->next = node->next;
 }
 
 template<typename T>
-void ListNode<T>::set_value(const T &val) { this->value = val; }
+void List<T>::ListNode::set_value(const T &val) { this->value = val; }
 
 template<typename T>
-void ListNode<T>::set_next(ListNode<T> &node) {
-    this->next = std::shared_ptr<ListNode<T>>(node);
+void List<T>::ListNode::set_next(List<T>::ListNode &node) {
+    this->next = std::shared_ptr<List<T>::ListNode>(node);
 }
 
 template<typename T>
-void ListNode<T>::set_next(const std::shared_ptr<ListNode<T>> &node) {
+void List<T>::ListNode::set_next(const std::shared_ptr<List<T>::ListNode> &node) {
     this->next = node;
 }
 
 template<typename T>
-void ListNode<T>::set_next_null(void) { this->next = nullptr; }
+void List<T>::ListNode::set_next_null(void) { this->next = nullptr; }
 
 template<typename T>
-T& ListNode<T>::get_ref(void) { return value; }
+T& List<T>::ListNode::get_ref(void) { return value; }
 
 template<typename T>
-const T& ListNode<T>::get_value(void) const { return value; };
+const T& List<T>::ListNode::get_value(void) const { return value; };
 
 template<typename T>
-std::shared_ptr<ListNode<T>> ListNode<T>::get_next(void) const {
+std::shared_ptr<typename List<T>::ListNode> List<T>::ListNode::get_next(void) const {
     return this->next;
 };
 
 template<typename T>
 requires Comparable<T>
-bool ListNode<T>::operator==(const ListNode<T> &node) const {
+bool List<T>::ListNode::operator==(const List<T>::ListNode &node) const {
     return this->next == node.next && this->get_ref() == node.get_ref();
 }
 template<typename T>
-bool ListNode<T>::operator!=(const ListNode<T> &node) const {
+bool List<T>::ListNode::operator!=(const List<T>::ListNode &node) const {
     return !(*this == node);
 }
 
 
 template<typename T>
-bool ListNode<T>::operator==(const std::shared_ptr<ListNode<T>> &node) const {
+bool List<T>::ListNode::operator==(const std::shared_ptr<typename List<T>::ListNode> &node) const {
     return this == node;
 }
 
 template<typename T>
-bool ListNode<T>::operator!=(const std::shared_ptr<ListNode<T>> &node) const {
+bool List<T>::ListNode::operator!=(const std::shared_ptr<typename List<T>::ListNode> &node) const {
     return !(this == node);
 }
 
