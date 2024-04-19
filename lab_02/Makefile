@@ -1,6 +1,6 @@
 
 CC = g++
-FLAGS = -Wall -Werror -Wno-unknown-pragmas -std=c++20 -Wpedantic
+FLAGS = -Wall -Werror -Wno-unknown-pragmas -std=c++23 -Wpedantic
 CLASSES_PATH = -I inc -I classes
 
 SRC = src

@@ -33,17 +33,17 @@ public:
     List(const std::initializer_list<T> &init);
 
     List(const iterator_type &beg, const iterator_type &end);
-    List(const iterator_type &beg, const iterator_type &end, size_t count);
+    List(const iterator_type &beg, size_t count);
     
     List(const const_iterator_type &beg, const const_iterator_type &end);
-    List(const const_iterator_type &beg, const const_iterator_type &end, size_t count);
+    List(const const_iterator_type &beg, size_t count);
 
     template<typename Iter>
     requires IteratorCheck<Iter, T>
     List(const Iter &begin, const Iter &end);
     template<typename Iter>
     requires IteratorCheck<Iter, T>
-    List(const Iter &begin, const Iter &end, size_t count);
+    List(const Iter &begin, size_t count);
 
     template <template<typename> class C>
     requires ContainerClass<C<T>>

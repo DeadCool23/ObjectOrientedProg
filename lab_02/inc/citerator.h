@@ -17,9 +17,9 @@ template <typename T>
 class ConstIterator : public BaseIterator {
 public:
     using value_type = T;
-    using pointer = const T*;
     using reference = const T&;
     using difference_type = size_t;
+    using pointer = const std::shared_ptr<T>;
     using iterator_category = std::forward_iterator_tag;
 
     using ListNode = List<T>::ListNode;

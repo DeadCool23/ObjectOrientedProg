@@ -53,14 +53,14 @@ List<T>::List(const iterator_type &beg, const iterator_type &end) {
 }
 
 template <typename T>
-List<T>::List(const iterator_type &beg, const iterator_type &end, size_t count) {
-    time_t now = time(NULL);
-    if (beg.distance(end) < Iterator<T>::difference_type(count))
-        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
-    
+List<T>::List(const iterator_type &beg, size_t count) {
     size_t i = 0;
-    for (auto it = beg; i++ < count && it != end; ++it)
+    for (auto it = beg; i++ < count && it; ++it)
         this->push_back(*it);
+    
+    time_t now = time(NULL);
+    if (i < count)
+        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 }
 
 template <typename T>
@@ -70,14 +70,14 @@ List<T>::List(const const_iterator_type &beg, const const_iterator_type &end) {
 }
 
 template <typename T>
-List<T>::List(const const_iterator_type &beg, const const_iterator_type &end, size_t count) {
-    time_t now = time(NULL);
-    if (beg.distance(end) < ConstIterator<T>::difference_type(count))
-        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
-    
+List<T>::List(const const_iterator_type &beg, size_t count) {
     size_t i = 0;
-    for (auto it = beg; i++ < count && it != end; ++it)
+    for (auto it = beg; i++ < count && it; ++it)
         this->push_back(*it);
+    
+    time_t now = time(NULL);
+    if (i < count)
+        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 }
 
 template <typename T>
@@ -91,14 +91,14 @@ List<T>::List(const Iter &beg, const Iter &end) {
 template <typename T>
 template<typename Iter>
 requires IteratorCheck<Iter, T>
-List<T>::List(const Iter &beg, const Iter &end, size_t count) {
-    time_t now = time(NULL);
-    if (beg.distance(end) < ConstIterator<T>::difference_type(count))
-        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
-    
+List<T>::List(const Iter &beg, size_t count) {
     size_t i = 0;
-    for (auto it = beg; i++ < count && it != end; ++it)
+    for (auto it = beg; i++ < count && it; ++it)
         this->push_back(*it);
+    
+    time_t now = time(NULL);
+    if (i < count)
+        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 }
 
 template <typename T>
@@ -148,16 +148,13 @@ T& List<T>::operator[](size_t ind) {
 
 template<typename T>
 const T& List<T>::operator[](size_t ind) const {
-    time_t now = time(NULL);
-    if (ind >= _size)
-        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
+    auto it = std::find_if(this->begin(), this->end(), [current_index = size_t{0}, target_index = ind](auto& value) mutable {
+        return current_index++ == target_index;
+    });
 
-    size_t i = 0;
-    for (const auto &value : *this) {
-        if (ind == i)
-            return value;
-        ++i;
-    }
+    time_t now = time(NULL);
+    if (!it) return *it;
+    else throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 }
 
 // --- Пушеры ---
@@ -416,8 +413,7 @@ void List<T>::remove(const T &value) {
 // --- Операции ---
 template<typename T>
 void List<T>::each(const std::function<T(const T &value)> &func) {
-    for (auto &value : *this)
-        value = func(value);
+    std::transform(this->begin(), this->end(), this->begin(), [&](const T &val) { return func(val); });
 }
 
 template<typename T>

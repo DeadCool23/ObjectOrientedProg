@@ -20,10 +20,10 @@ class List;
 template <typename T>
 class Iterator : public BaseIterator {
 public:
-    using pointer = T*;
     using reference = T&;
     using value_type = T;
     using difference_type = int32_t;
+    using pointer = std::shared_ptr<T>;
     using iterator_category = std::forward_iterator_tag;
 
     using ListNode = List<T>::ListNode;
