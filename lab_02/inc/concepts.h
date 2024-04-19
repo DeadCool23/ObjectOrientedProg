@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <concepts>
+#include <type_traits>
 
 template<typename T>
 concept Summable = requires (T a, T b) {
@@ -22,7 +23,7 @@ concept Divable = requires (T a, T b) {
 };
 
 template<typename T>
-concept Empty = requires { T(); };
+concept EmptyConstructable = std::is_default_constructible_v<T>;
 
 template<typename T>
 concept Neitral = requires { T(0); };
@@ -56,7 +57,7 @@ template <typename C>
 concept ContainerClass = requires (C c) {
     typename C::value_type;
     typename C::size_type;
-    
+
     typename C::iterator;
     typename C::const_iterator;
 

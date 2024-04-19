@@ -1,6 +1,7 @@
 #ifndef __LIST_HPP__
 #define __LIST_HPP__
 
+#include <ranges>
 #include <iostream>
 #include "concepts.h"
 
@@ -46,13 +47,13 @@ List<T>::List(const C<U> &container) {
 }
 
 template <typename T>
-List<T>::List(const iterator_t &beg, const iterator_t &end) {
+List<T>::List(const iterator_type &beg, const iterator_type &end) {
     for (auto it = beg; it != end; ++it)
         this->push_back(*it);
 }
 
 template <typename T>
-List<T>::List(const iterator_t &beg, const iterator_t &end, size_t count) {
+List<T>::List(const iterator_type &beg, const iterator_type &end, size_t count) {
     time_t now = time(NULL);
     if (beg.distance(end) < Iterator<T>::difference_type(count))
         throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
@@ -63,13 +64,13 @@ List<T>::List(const iterator_t &beg, const iterator_t &end, size_t count) {
 }
 
 template <typename T>
-List<T>::List(const citerator_t &beg, const citerator_t &end) {
+List<T>::List(const const_iterator_type &beg, const const_iterator_type &end) {
     for (auto it = beg; it != end; ++it)
         this->push_back(*it);
 }
 
 template <typename T>
-List<T>::List(const citerator_t &beg, const citerator_t &end, size_t count) {
+List<T>::List(const const_iterator_type &beg, const const_iterator_type &end, size_t count) {
     time_t now = time(NULL);
     if (beg.distance(end) < ConstIterator<T>::difference_type(count))
         throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
@@ -439,31 +440,36 @@ List<T> &List<T>::operator=(const List<T> &list) {
 template<typename T>
 requires Multable<T>
 List<T> List<T>::operator*(const T& multer) {
-    List<T> res;
-    for (auto &value : *this)
-        res.push_back(value * multer);
+    List<T> res(*this);
+    std::transform(this->begin(), this->end(), res.begin(), [&](const T &val) { return val * multer; });
 
     return res;
 }
 
 template<typename T>
 requires Multable<T>
-List<T> &List<T>::operator*=(const T& multer) { return *this * multer; }
+List<T> &List<T>::operator*=(const T& multer) {
+    std::transform(this->begin(), this->end(), this->begin(), [&](const T &val) { return val * multer; });
+    return *this; 
+}
 
 template<typename T>
-requires Divable<T> && Comparable<T>
+requires Neitral<T> && Divable<T> && Comparable<T>
 List<T> List<T>::operator/(const T& diver) {
-    time_t now = time(NULL);
-    if (diver == T(0)) throw LogicError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
-    List<T> res;
-    for (auto &value : *this)
-        res.push_back(value / diver);
+    List<T> res(*this);
+    std::transform(this->begin(), this->end(), res.begin(), [&](const T &val) { return val / diver; });
 
     return res;
 }
 template<typename T>
 requires Divable<T> && Comparable<T> && Neitral<T>
-List<T> &List<T>::operator/=(const T& diver) { return *this / diver; }
+List<T> &List<T>::operator/=(const T& diver) {
+    time_t now = time(NULL);
+    if (diver == T(0)) throw LogicError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
+
+    std::transform(this->begin(), this->end(), this->begin(), [&](const T &val) { return val / diver; });
+    return *this / diver; 
+}
 
 
 template<typename T>
@@ -549,25 +555,25 @@ void List<T>::debug_print(void) const noexcept {
 /* ------------------------- Получение Итераторов -------------------------- */
 
 template<typename T>
-List<T>::iterator_t List<T>::begin(void) { return Iterator<T>(head, _size); }
+List<T>::iterator_type List<T>::begin(void) { return Iterator<T>(head, _size); }
 
 template<typename T>
-List<T>::iterator_t List<T>::end(void) {
+List<T>::iterator_type List<T>::end(void) {
     auto end_ptr = tail->get_next();
     return Iterator<T>(end_ptr, _size, _size); 
 }
 
 template<typename T>
-List<T>::citerator_t List<T>::cbegin(void) const { return begin(); }
+List<T>::const_iterator_type List<T>::cbegin(void) const { return begin(); }
 
 template<typename T>
-List<T>::citerator_t List<T>::cend(void) const { return end(); }
+List<T>::const_iterator_type List<T>::cend(void) const { return end(); }
 
 template<typename T>
-List<T>::citerator_t List<T>::begin(void) const { return ConstIterator<T>(head, _size); }
+List<T>::const_iterator_type List<T>::begin(void) const { return ConstIterator<T>(head, _size); }
 
 template<typename T>
-List<T>::citerator_t List<T>::end(void) const {
+List<T>::const_iterator_type List<T>::end(void) const {
     auto end_ptr = tail->get_next();
     return ConstIterator<T>(end_ptr, _size, _size); 
 }
@@ -580,6 +586,19 @@ template<typename T>
 std::shared_ptr<typename List<T>::ListNode> List<T>::get_head(void) { return head; }
 template<typename T>
 std::shared_ptr<typename List<T>::ListNode> List<T>::get_tail(void) { return tail; }
+
+template<typename T>
+List<T> List<T>::ListAllocate(size_t size) {
+    time_t now = time(NULL);
+    if (size < 0) throw SizeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
+
+    this->_size = size;
+    auto cur = this->head;
+    for (size_t i = 0; i < size; ++i, cur = cur->get_next()) {
+        cur->set_next(NodeAlloc());
+        this->tail = cur;
+    };
+}
 
 // Выделение памяти под Узел
 template<typename T>

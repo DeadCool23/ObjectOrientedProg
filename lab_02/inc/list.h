@@ -15,14 +15,14 @@
 #include <initializer_list>
 
 template <typename T>
-requires Comparable<T> && Empty<T> &&
+requires Comparable<T> && EmptyConstructable<T> &&
          Divable<T> && Multable<T> && 
          Neitral<T> && Printable<T>
 class List : public Container {
 public:
-    using value_t = T;
-    using iterator_t = Iterator<T>;
-    using citerator_t = ConstIterator<T>;
+    using value_type = T;
+    using iterator_type = Iterator<T>;
+    using const_iterator_type = ConstIterator<T>;
 
     friend class Iterator<T>;
     friend class ConstIterator<T>;
@@ -32,11 +32,11 @@ public:
     List(size_t size, const T &value);
     List(const std::initializer_list<T> &init);
 
-    List(const iterator_t &beg, const iterator_t &end);
-    List(const iterator_t &beg, const iterator_t &end, size_t count);
+    List(const iterator_type &beg, const iterator_type &end);
+    List(const iterator_type &beg, const iterator_type &end, size_t count);
     
-    List(const citerator_t &beg, const citerator_t &end);
-    List(const citerator_t &beg, const citerator_t &end, size_t count);
+    List(const const_iterator_type &beg, const const_iterator_type &end);
+    List(const const_iterator_type &beg, const const_iterator_type &end, size_t count);
 
     template<typename Iter>
     requires IteratorCheck<Iter, T>
@@ -55,10 +55,10 @@ public:
 
 
     List(List<T> &&list);
-    explicit List(const List<T> &list);
+    List(const List<T> &list);
     template <typename U>
     requires Convertable<T, U>
-    explicit List(const List<U> &list);
+    List(const List<U> &list);
 
     bool is_empty() const override;
     size_t size(void) const override;
@@ -129,14 +129,14 @@ public:
     void print(void) const noexcept;
     void debug_print(void) const noexcept;
 
-    iterator_t begin(void);
-    iterator_t end(void);
+    iterator_type begin(void);
+    iterator_type end(void);
 
-    citerator_t begin(void) const;
-    citerator_t end(void) const;
+    const_iterator_type begin(void) const;
+    const_iterator_type end(void) const;
 
-    citerator_t cbegin(void) const;
-    citerator_t cend(void) const;
+    const_iterator_type cbegin(void) const;
+    const_iterator_type cend(void) const;
 
     ~List() = default;
 
@@ -179,7 +179,8 @@ protected:
     std::shared_ptr<ListNode> get_head(void);
     std::shared_ptr<ListNode> get_tail(void);
 
-    std::shared_ptr<ListNode> NodeAlloc(const T &value);
+    List<T> ListAllocate(size_t size);
+    std::shared_ptr<ListNode> NodeAlloc(const T &value = T());
 
 private:
     std::shared_ptr<ListNode> head;

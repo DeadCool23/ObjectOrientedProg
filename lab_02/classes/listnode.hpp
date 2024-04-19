@@ -2,7 +2,7 @@
 #define __LISTNODE_HPP__
 
 template<typename T>
-requires Empty<T>
+requires EmptyConstructable<T>
 List<T>::ListNode::ListNode(void) : value(T()), next(nullptr) {}
 
 template<typename T>

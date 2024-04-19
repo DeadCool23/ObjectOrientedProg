@@ -12,7 +12,7 @@ extern "C" {
 }
 
 template <typename T>
-requires Comparable<T> && Empty<T> &&
+requires Comparable<T> && EmptyConstructable<T> &&
          Divable<T> && Multable<T> && 
          Neitral<T> && Printable<T>
 class List;
