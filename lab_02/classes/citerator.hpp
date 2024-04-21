@@ -15,12 +15,12 @@ bool ConstIterator<T>::operator == (const ConstIterator<T> &other) const {
 
 template<typename T>
 ConstIterator<T>::pointer ConstIterator<T>::operator->() const {
-    return &this->ptr.lock()->get_ref();
+    return &this->ptr.lock()->get_value();
 }
 
 template<typename T>
 ConstIterator<T>::reference ConstIterator<T>::operator*() const {
-    return this->ptr.lock()->get_ref();
+    return this->ptr.lock()->get_value();
 }
 
 template<typename T>

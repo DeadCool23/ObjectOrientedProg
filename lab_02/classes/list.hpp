@@ -31,14 +31,6 @@ List<T>::List(const std::initializer_list<T> &init) {
 }
 
 template <typename T>
-template <template<typename> class C>
-requires ContainerClass<C<T>>
-List<T>::List(const C<T> &container) {
-    for (const auto &value : container)
-        this->push_back(value);
-}
-
-template <typename T>
 template <typename U, template<typename> class C>
 requires ContainerClass<C<U>> && Convertable<T, U>
 List<T>::List(const C<U> &container) {
@@ -80,7 +72,7 @@ List<T>::List(const const_iterator_type &beg, size_t count) {
         throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 }
 
-template <typename T>
+template<typename T>
 template<typename Iter>
 requires IteratorCheck<Iter, T>
 List<T>::List(const Iter &beg, const Iter &end) {
@@ -88,7 +80,7 @@ List<T>::List(const Iter &beg, const Iter &end) {
     for (auto it = beg; it != end; ++it)
         this->push_back(*it);
 }
-template <typename T>
+template<typename T>
 template<typename Iter>
 requires IteratorCheck<Iter, T>
 List<T>::List(const Iter &beg, size_t count) {
@@ -107,17 +99,17 @@ List<T>::List(List<T> &&list) : head(list.head), tail(list.tail) {
 }
 
 template <typename T>
-List<T>::List(const List<T> &list) {
-    for (const auto &value : list)
-        this->push_back(value);
-}
-
-template <typename T>
 template <typename U>
 requires Convertable<T, U>
 List<T>::List(const List<U> &list) {
     for (const auto &value : list)
         this->push_back(T(value));
+}
+
+template <typename T>
+List<T>::List(const List<T> &list) {
+    for (const auto &value : list)
+        this->push_back(value);
 }
 
 
@@ -176,12 +168,6 @@ void List<T>::push_back(const T &value) {
 }
 
 template<typename T>
-void List<T>::push_back(const List<T> &list) {
-    for (auto &value : list)
-        this->push_back(value);
-}
-
-template<typename T>
 template<typename U>
 requires Convertable<T, U>
 void List<T>::push_back(const List<U> &list) {
@@ -202,15 +188,6 @@ void List<T>::push_front(const T &value) {
         tail = head;
     }
     ++this->_size;
-}
-
-template<typename T>
-void List<T>::push_front(const List<T> &list) {
-    List<T> front_list;
-    for (auto &value : list)
-        front_list.push_back(value);
-    front_list.tail->set_next(this->head);
-    this->head = front_list.head;
 }
 
 template<typename T>
@@ -349,25 +326,6 @@ void List<T>::insert(size_t index, const T &value) {
 }
 
 template<typename T>
-void List<T>::insert(size_t index, const List<T> &list) {
-    time_t now = time(NULL);
-    if (index > this->_size && index < 0)
-        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
-
-    if (!index) {
-        this->push_front(list);
-    } else if (index == _size) {
-        this->push_back(list);
-    } else {
-        auto cur = this->head;
-        for (size_t i = 0; i < index - 1; ++i, cur = cur->get_next());
-
-        List<T> new_tree = List(list);
-        new_tree->get_tail()->set_next(cur->get_next());
-        cur->set_next(new_tree);
-    }
-}
-template<typename T>
 template<typename U>
 requires Convertable<T, U>
 void List<T>::insert(size_t index, const List<U> &list) {
@@ -429,6 +387,16 @@ List<T> &List<T>::operator=(List<T> &&list) {
 }
 
 template<typename T>
+template<typename U>
+requires Convertable<T, U>
+List<T> &List<T>::operator=(const List<U> &list) {
+
+    auto tmp = List<T>(list);
+    *this = tmp;
+    return *this;
+}
+
+template<typename T>
 List<T> &List<T>::operator=(const List<T> &list) {
     this->clear();
     for (const auto& item : list)
@@ -437,29 +405,15 @@ List<T> &List<T>::operator=(const List<T> &list) {
 }
 
 template<typename T>
-List<T> List<T>::operator+(const List<T> &add_list) {
-    List<T> tmp;
-    tmp.push_back(*this);  
-    tmp.push_back(add_list);  
-    return tmp;
-}
-
-template<typename T>
 template<typename U>
 requires Convertable<T, U>
-List<T> List<T>::operator+(const List<U> &add_list) {
+List<T> List<T>::operator+(const List<U> &add_list) const {
     List<T> tmp;
     tmp.push_back(*this);  
     tmp.push_back(add_list);  
     return tmp;
 }
 
-
-template<typename T>
-List<T> &List<T>::operator+=(const List<T> &add_list) { 
-    *this = *this + add_list;
-    return *this;
-}
 
 template<typename T>
 template<typename U>

@@ -44,32 +44,26 @@ public:
     requires IteratorCheck<Iter, T>
     List(const Iter &begin, size_t count);
 
-    template <template<typename> class C>
-    requires ContainerClass<C<T>>
-    explicit List(const C<T> &container);
-
     template <typename U, template<typename> class C>
     requires ContainerClass<C<U>> && Convertable<T, U>
     explicit List(const C<U> &container);
 
 
     List(List<T> &&list);
-    List(const List<T> &list);
     template <typename U>
     requires Convertable<T, U>
     List(const List<U> &list);
+    List(const List<T> &list);
 
     bool is_empty() const override;
     size_t size(void) const override;
 
     void push_back(const T &value);
-    void push_back(const List<T> &list);
     template<typename U>
     requires Convertable<T, U>
     void push_back(const List<U> &list);
 
     void push_front(const T &value);
-    void push_front(const List<T> &list);
     template<typename U>
     requires Convertable<T, U>
     void push_front(const List<U> &list);
@@ -83,7 +77,6 @@ public:
     bool find(const T &find_value) const noexcept;
 
     void insert(size_t index, const T &value);
-    void insert(size_t index, const List<T> &list);
     template<typename U>
     requires Convertable<T, U>
     void insert(size_t index, const List<U> &list);
@@ -96,17 +89,15 @@ public:
     const T& operator[](size_t ind) const;
 
     List<T> &operator=(List<T> &&list);
-    List<T> &operator=(const List<T> &list);
     template<typename U>
     requires Convertable<T, U>
     List<T> &operator=(const List<U> &list);
+    List<T> &operator=(const List<T> &list);
 
-    List<T> operator+(const List<T> &add_list);
     template<typename U>
     requires Convertable<T, U>
-    List<T> operator+(const List<U> &add_list);
+    List<T> operator+(const List<U> &add_list) const;
     
-    List<T> &operator+=(const List<T> &add_list);
     template<typename U>
     requires Convertable<T, U>
     List<T> &operator+=(const List<U> &add_list);

@@ -40,7 +40,7 @@ private:
     void next(void);
 
 private:
-    std::weak_ptr<ListNode> ptr;
+    std::weak_ptr<const ListNode> ptr;
 };
 
 #include "citerator.hpp"
