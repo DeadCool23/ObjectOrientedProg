@@ -133,12 +133,12 @@ protected:
     public:
         ListNode(void);
         ListNode(const T &val);
-        ListNode(ListNode &node);
         ListNode(ListNode &&node);
-        ListNode(std::shared_ptr<ListNode> &node);
+        ListNode(const ListNode &node);
+        ListNode(const std::shared_ptr<ListNode> &node);
 
         void set_value(const T &val);
-        void set_next(ListNode &node);
+        void set_next(const ListNode &node);
         void set_next(const std::shared_ptr<ListNode> &node);
 
         void set_next_null(void);

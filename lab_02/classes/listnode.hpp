@@ -9,13 +9,13 @@ template<typename T>
 List<T>::ListNode::ListNode(const T &val) : value(val), next(nullptr) {}
 
 template<typename T>
-List<T>::ListNode::ListNode(List<T>::ListNode &node) :value(node), next(node.next) {}
-
-template<typename T>
 List<T>::ListNode::ListNode(List<T>::ListNode &&node) : value(node.next), next(node.next) {}
 
 template<typename T>
-List<T>::ListNode::ListNode(std::shared_ptr<List<T>::ListNode> &node) {
+List<T>::ListNode::ListNode(const List<T>::ListNode &node) :value(node), next(node.next) {}
+
+template<typename T>
+List<T>::ListNode::ListNode(const std::shared_ptr<List<T>::ListNode> &node) {
     this->value = node->value;
     this->next = node->next;
 }
@@ -24,7 +24,7 @@ template<typename T>
 void List<T>::ListNode::set_value(const T &val) { this->value = val; }
 
 template<typename T>
-void List<T>::ListNode::set_next(List<T>::ListNode &node) {
+void List<T>::ListNode::set_next(const List<T>::ListNode &node) {
     this->next = std::shared_ptr<List<T>::ListNode>(node);
 }
 
