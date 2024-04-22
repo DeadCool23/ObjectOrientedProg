@@ -19,9 +19,20 @@ Iterator<T>::pointer Iterator<T>::operator->() {
 }
 
 template<typename T>
+const Iterator<T>::pointer Iterator<T>::operator->() const {
+    return &this->ptr.lock()->get_value();
+}
+
+template<typename T>
 Iterator<T>::reference Iterator<T>::operator*() {
     return this->ptr.lock()->get_ref();
 }
+
+template<typename T>
+const Iterator<T>::reference Iterator<T>::operator*() const {
+    return this->ptr.lock()->get_value();
+}
+
 
 template<typename T>
 Iterator<T>::operator bool() const {

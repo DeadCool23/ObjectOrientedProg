@@ -34,7 +34,10 @@ public:
     bool operator == (Iterator const& other) const;
 
     pointer operator->();
+    const pointer operator->() const;
+
     reference operator*();
+    const reference operator*() const;
     
     operator bool() const;
     Iterator& operator++();
