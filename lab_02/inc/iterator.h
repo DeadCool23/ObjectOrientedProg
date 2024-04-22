@@ -29,9 +29,9 @@ public:
 
 public:
     Iterator(const Iterator& iter) = default;
-    Iterator(const std::shared_ptr<ListNode> &node, size_t size, size_t ind = 0);
+    Iterator(const std::shared_ptr<ListNode> &node, size_t ind = 0);
     
-    bool operator == (Iterator const& other) const;
+    bool operator==(Iterator const& other) const;
 
     pointer operator->();
     const pointer operator->() const;
@@ -43,9 +43,9 @@ public:
     Iterator& operator++();
     Iterator operator++(int);
 
-    difference_type distance(const Iterator<T>& other) const;
-private:
+protected:
     void next(void);
+    void check_value(void) const;
 
 private:
     std::weak_ptr<ListNode> ptr;

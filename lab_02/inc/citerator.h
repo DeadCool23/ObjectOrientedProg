@@ -24,7 +24,7 @@ public:
     using ListNode = List<T>::ListNode;
 public:
     ConstIterator(const ConstIterator<T>& iter) = default;
-    ConstIterator(const std::shared_ptr<ListNode> &node, size_t size, size_t ind = 0);
+    ConstIterator(const std::shared_ptr<ListNode> &node, size_t ind = 0);
 
     bool operator == (ConstIterator const& other) const;
 
@@ -35,9 +35,9 @@ public:
     ConstIterator& operator++();
     ConstIterator operator++(int);
 
-    difference_type distance(const ConstIterator<T>& other) const;
 private:
     void next(void);
+    void check_value(void) const;
 
 private:
     std::weak_ptr<const ListNode> ptr;

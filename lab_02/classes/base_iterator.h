@@ -10,7 +10,6 @@ public:
     BaseIterator() = default;
     ~BaseIterator() = default;
 protected:
-    size_t size = 0;
     size_t index = 0;
 };
 

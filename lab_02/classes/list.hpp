@@ -495,12 +495,12 @@ void List<T>::debug_print(void) const noexcept {
 /* ------------------------- Получение Итераторов -------------------------- */
 
 template<typename T>
-List<T>::iterator_type List<T>::begin(void) { return Iterator<T>(head, _size); }
+List<T>::iterator_type List<T>::begin(void) { return Iterator<T>(head); }
 
 template<typename T>
 List<T>::iterator_type List<T>::end(void) {
     auto end_ptr = tail->get_next();
-    return Iterator<T>(end_ptr, _size, _size); 
+    return Iterator<T>(end_ptr, _size); 
 }
 
 template<typename T>
@@ -510,12 +510,12 @@ template<typename T>
 List<T>::const_iterator_type List<T>::cend(void) const { return end(); }
 
 template<typename T>
-List<T>::const_iterator_type List<T>::begin(void) const { return ConstIterator<T>(head, _size); }
+List<T>::const_iterator_type List<T>::begin(void) const { return ConstIterator<T>(head); }
 
 template<typename T>
 List<T>::const_iterator_type List<T>::end(void) const {
     auto end_ptr = tail->get_next();
-    return ConstIterator<T>(end_ptr, _size, _size); 
+    return ConstIterator<T>(end_ptr, _size); 
 }
 
 #pragma endregion

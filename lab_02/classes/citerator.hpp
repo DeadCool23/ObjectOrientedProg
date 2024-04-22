@@ -2,9 +2,8 @@
 #define __CITERATOR_HPP__
 
 template<typename T>
-ConstIterator<T>::ConstIterator(const std::shared_ptr<typename ConstIterator<T>::ListNode> &node, size_t size, size_t ind) {
+ConstIterator<T>::ConstIterator(const std::shared_ptr<typename ConstIterator<T>::ListNode> &node, size_t ind) {
     ptr = node;
-    this->size = size;
     this->index = ind;
 }
 
@@ -15,11 +14,13 @@ bool ConstIterator<T>::operator == (const ConstIterator<T> &other) const {
 
 template<typename T>
 ConstIterator<T>::pointer ConstIterator<T>::operator->() const {
+    check_value();
     return &this->ptr.lock()->get_value();
 }
 
 template<typename T>
 ConstIterator<T>::reference ConstIterator<T>::operator*() const {
+    check_value();
     return this->ptr.lock()->get_value();
 }
 
@@ -31,7 +32,7 @@ ConstIterator<T>::operator bool() const {
 template<typename T>
 void ConstIterator<T>::next(void) {
     time_t now = time(NULL);
-    if (index >= size || !this->ptr.lock())
+    if (!this->ptr.lock())
         throw IteratorError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
     this->ptr = this->ptr.lock()->get_next();
     ++this->index;
@@ -52,8 +53,9 @@ ConstIterator<T> ConstIterator<T>::operator++(int) {
 }
 
 template<typename T>
-ConstIterator<T>::difference_type ConstIterator<T>::distance(const ConstIterator<T>& other) const {
-    return difference_type(this->index) - difference_type(other.index);
+void ConstIterator<T>::check_value(void) const {
+    time_t now = time(NULL);
+    if (!ptr.lock()) throw PointerError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 }
 
 #endif // __CITERATOR_HPP__
