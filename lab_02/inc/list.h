@@ -165,7 +165,7 @@ protected:
     std::shared_ptr<ListNode> get_head(void);
     std::shared_ptr<ListNode> get_tail(void);
 
-    List<T> ListAllocate(size_t size);
+    void ListAllocate(size_t size);
     std::shared_ptr<ListNode> NodeAlloc(const T &value = T());
 
 private:

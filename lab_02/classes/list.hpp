@@ -13,19 +13,21 @@ template <typename T>
 List<T>::List(void) : head(nullptr), tail(nullptr) {}
 
 template <typename T>
-List<T>::List(const T &value) { this->push_back(value); }
+List<T>::List(const T &value) { this->clear();push_back(value); }
 
 template <typename T>
 List<T>::List(size_t size, const T &value) {
     time_t now = time(NULL);
     if (size < 0) throw SizeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 
+    this->clear();
     for (size_t i = 0; i < size; ++i)
         this->push_back(value);
 }
 
 template <typename T>
 List<T>::List(const std::initializer_list<T> &init) {
+    this->clear();
     for (const auto &value : init)
         this->push_back(value);
 }
@@ -34,18 +36,22 @@ template <typename T>
 template <typename U, template<typename> class C>
 requires ContainerClass<C<U>> && Convertable<T, U>
 List<T>::List(const C<U> &container) {
+    this->clear();
     for (const auto &value : container)
         this->push_back(T(value));
 }
 
 template <typename T>
 List<T>::List(const iterator_type &beg, const iterator_type &end) {
+    this->clear();
     for (auto it = beg; it != end; ++it)
         this->push_back(*it);
 }
 
 template <typename T>
 List<T>::List(const iterator_type &beg, size_t count) {
+    this->clear();
+    
     size_t i = 0;
     for (auto it = beg; i++ < count && it; ++it)
         this->push_back(*it);
@@ -57,12 +63,14 @@ List<T>::List(const iterator_type &beg, size_t count) {
 
 template <typename T>
 List<T>::List(const const_iterator_type &beg, const const_iterator_type &end) {
+    this->clear();
     for (auto it = beg; it != end; ++it)
         this->push_back(*it);
 }
 
 template <typename T>
 List<T>::List(const const_iterator_type &beg, size_t count) {
+    this->clear();
     size_t i = 0;
     for (auto it = beg; i++ < count && it; ++it)
         this->push_back(*it);
@@ -76,6 +84,7 @@ template<typename T>
 template<typename Iter>
 requires IteratorCheck<Iter, T>
 List<T>::List(const Iter &beg, const Iter &end) {
+    this->clear();
     size_t i = 0;
     for (auto it = beg; it != end; ++it)
         this->push_back(*it);
@@ -84,6 +93,7 @@ template<typename T>
 template<typename Iter>
 requires IteratorCheck<Iter, T>
 List<T>::List(const Iter &beg, size_t count) {
+    this->clear();
     size_t i = 0;
     for (auto it = beg; i++ < count && it; ++it)
         this->push_back(*it);
@@ -102,12 +112,14 @@ template <typename T>
 template <typename U>
 requires Convertable<T, U>
 List<T>::List(const List<U> &list) {
+    this->clear();
     for (const auto &value : list)
         this->push_back(T(value));
 }
 
 template <typename T>
 List<T>::List(const List<T> &list) {
+    this->clear();
     for (const auto &value : list)
         this->push_back(value);
 }
@@ -203,13 +215,16 @@ void List<T>::push_front(const List<U> &list) {
 
 // --- Поперы ---
 template<typename T>
+requires EmptyConstructable<T>
 T List<T>::pop_back(void) {
     time_t now = time(NULL);
     if (!_size) throw EmptyError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 
     T del_val;
     if (_size == 1) {
-        del_val = this->head->get_ref();
+        del_val = this->head
+            ? this->head->get_ref()
+            : T();
         this->head = nullptr;
         this->tail = nullptr;
     } else {    
@@ -226,17 +241,19 @@ T List<T>::pop_back(void) {
 }
 
 template<typename T>
+requires EmptyConstructable<T>
 T List<T>::pop_front(void) {
     time_t now = time(NULL);
     if (!_size) throw SizeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 
-    T del_val;
+    T del_val = this->head
+        ? this->head->get_ref()
+        : T();
+    
     if (_size == 1) {
-        del_val = this->head->get_ref();
         this->head = nullptr;
         this->tail = nullptr;
     } else {
-        del_val = this->head->get_ref();
         this->head = this->head->get_next();
     }
 
@@ -511,14 +528,15 @@ template<typename T>
 std::shared_ptr<typename List<T>::ListNode> List<T>::get_tail(void) { return tail; }
 
 template<typename T>
-List<T> List<T>::ListAllocate(size_t size) {
+void List<T>::ListAllocate(size_t size) {
     time_t now = time(NULL);
     if (size < 0) throw SizeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 
     this->_size = size;
-    auto cur = this->head;
+    std::shared_ptr<List<T>::ListNode> cur = nullptr;
     for (size_t i = 0; i < size; ++i, cur = cur->get_next()) {
-        cur->set_next(NodeAlloc());
+        cur = NodeAlloc();
+        if (!i) this->head = cur;
         this->tail = cur;
     };
 }

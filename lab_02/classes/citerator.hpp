@@ -46,7 +46,7 @@ ConstIterator<T>& ConstIterator<T>::operator++() {
 
 template<typename T>
 ConstIterator<T> ConstIterator<T>::operator++(int) {
-    auto ret_ptr = *this;
+    ConstIterator<T> ret_ptr = *this;
     this->next();
     return ret_ptr;
 }
