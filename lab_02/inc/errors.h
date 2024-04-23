@@ -31,53 +31,62 @@ class BaseError: public std::exception {
         char error_info[1024];
 };
 
+// Ошибки Списка
 
-class MemError: public BaseError {
+class ListBaseError : public BaseError {
+    public:
+        ListBaseError(const char *filename, const char *classname, int line, const char *time, const char *info)
+        : BaseError(filename, classname, line, time, info) {};
+};
+
+class MemError: public ListBaseError {
     public:
         MemError(const char *filename, const char *classname, int line, const char *time, const char *info = "Invalid memory allocation")
-        : BaseError(filename, classname, line, time, info) {};
+        : ListBaseError(filename, classname, line, time, info) {};
 };
 
-class RangeError: public BaseError {
+class RangeError: public ListBaseError {
     public:
         RangeError(const char *filename, const char *classname, int line, const char *time, const char *info = "Invalid range")
-        : BaseError(filename, classname, line, time, info) {};
+        : ListBaseError(filename, classname, line, time, info) {};
 };
 
-class SizeError: public BaseError {
+class SizeError: public ListBaseError {
     public:
         SizeError(const char *filename, const char *classname, int line, const char *time, const char *info = "Invalid size")
-        : BaseError(filename, classname, line, time, info) {};
+        : ListBaseError(filename, classname, line, time, info) {};
 };
 
-class EmptyError: public BaseError {
+class EmptyError: public ListBaseError {
     public:
         EmptyError(const char *filename, const char *classname, int line, const char *time, const char *info = "List is empty")
-        : BaseError(filename, classname, line, time, info) {};
+        : ListBaseError(filename, classname, line, time, info) {};
 };
 
-class LogicError: public BaseError {
-    public:
-        LogicError(const char *filename, const char *classname, int line, const char *time, const char *info = "Invalid logic")
-        : BaseError(filename, classname, line, time, info) {};
-};
-
-class NoValueError: public BaseError {
+class NoValueError: public ListBaseError {
     public:
         NoValueError(const char *filename, const char *classname, int line, const char *time, const char *info = "No value found")
+        : ListBaseError(filename, classname, line, time, info) {};
+};
+
+// Ошибки итератора
+
+class IteratorBaseError : public BaseError {
+    public:
+        IteratorBaseError(const char *filename, const char *classname, int line, const char *time, const char *info)
         : BaseError(filename, classname, line, time, info) {};
 };
 
-class PointerError: public BaseError {
+class PointerError: public IteratorBaseError {
     public:
         PointerError(const char *filename, const char *classname, int line, const char *time, const char *info = "Invalid pointer")
-        : BaseError(filename, classname, line, time, info) {};
+        : IteratorBaseError(filename, classname, line, time, info) {};
 };
 
-class IteratorError: public BaseError {
+class IteratorError: public IteratorBaseError {
     public:
         IteratorError(const char *filename, const char *classname, int line, const char *time, const char *info = "Iter")
-        : BaseError(filename, classname, line, time, info) {};
+        : IteratorBaseError(filename, classname, line, time, info) {};
 };
 
 #endif // __ERRORS_H__

@@ -427,12 +427,12 @@ auto List<T>::operator<=>(const List<T>& other) const {
 
 // --- Печать ---
 
-template<typename T>
+template<Printable T>
 std::ostream& operator<<(std::ostream& os, const List<T> &list) {
     os << "Size: " << list._size << std::endl;
     os << "{" << std::endl;
     for (Container::size_type i = 0; i < list._size; ++i)
-        os << "  " << "[" << i << "]: " << (/*const_cast<List<T>&>(*/list/*)*/)[i] << std::endl;
+        os << "  " << "[" << i << "]: " << list[i] << std::endl;
     os << "}" << std::endl;
 }
 

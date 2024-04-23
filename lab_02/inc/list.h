@@ -14,6 +14,8 @@
 #include <functional>
 #include <initializer_list>
 
+using namespace IterConcepts;
+
 template <typename T>
 requires EqualityComparable<T> && EmptyConstructable<T>
 class List : public Container {
