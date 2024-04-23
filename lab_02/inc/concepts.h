@@ -34,7 +34,7 @@ concept Сommutativity = requires (T a, T b) {
 };
 
 template<typename T>
-concept Comparable = requires (T a, T b) {
+concept EqualityComparable = requires (T a, T b) {
     {a == b} -> std::convertible_to<bool>;
     {a != b} -> std::convertible_to<bool>;
     // {!a} -> std::convertible_to<bool>;
@@ -61,20 +61,34 @@ concept ContainerClass = requires (C c) {
     typename C::iterator;
     typename C::const_iterator;
 
-    { c.begin() } noexcept -> std::same_as<typename C::iterator>;
-    { c.end() } noexcept -> std::same_as<typename C::iterator>;
-
-    { c.cend() } noexcept -> std::same_as<typename C::const_iterator>;
-    { c.cbegin() } noexcept -> std::same_as<typename C::const_iterator>;
-    
     { c.size() } noexcept -> std::same_as<typename C::size_type>;
+    { c.end() } noexcept -> std::same_as<typename C::iterator>;
+    { c.begin() } noexcept -> std::same_as<typename C::iterator>;
 };
 
-template <typename Iter, typename T>
-concept IteratorCheck = Incrementable<Iter> && Comparable<Iter> && 
-requires (Iter it) {
-    { *it } -> std::convertible_to<const T&>;
+template <typename I>
+concept IteratorCheck = requires() {
+    typename I::value_type;
+    typename I::difference_type;
+    typename I::pointer;
+    typename I::reference;
 };
+
+template <typename T, typename U>
+concept DerivedFrom = std::is_base_of<U, T>::value;
+
+template <typename I>
+concept InputIterator = 
+    IteratorCheck<I> &&
+    requires { typename I::iterator_category; } &&
+    EqualityComparable<I> &&
+    DerivedFrom<typename I::iterator_category, std::input_iterator_tag>;
+
+template <typename I>
+concept ForwardIterator = 
+    InputIterator<I> && 
+    Incrementable<I> && 
+    DerivedFrom<typename I::iterator_category, std::forward_iterator_tag>;
 
 template <typename T>
 concept Printable = requires (T a, std::ostream os) { os << a; };

@@ -31,6 +31,7 @@ class BaseError: public std::exception {
         char error_info[1024];
 };
 
+
 class MemError: public BaseError {
     public:
         MemError(const char *filename, const char *classname, int line, const char *time, const char *info = "Invalid memory allocation")

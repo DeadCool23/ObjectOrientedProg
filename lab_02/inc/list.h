@@ -15,7 +15,7 @@
 #include <initializer_list>
 
 template <typename T>
-requires Comparable<T> && EmptyConstructable<T>
+requires EqualityComparable<T> && EmptyConstructable<T>
 class List : public Container {
 public:
     using value_type = T;
@@ -30,22 +30,16 @@ public:
     List(size_type size, const T &value);
     List(const std::initializer_list<T> &init);
 
-    List(const iterator &beg, const iterator &end);
-    List(const iterator &beg, size_type count);
-    
-    List(const const_iterator &beg, const const_iterator &end);
-    List(const const_iterator &beg, size_type count);
-
     template<typename Iter>
-    requires IteratorCheck<Iter, T>
+    requires ForwardIterator<Iter>
     List(const Iter &begin, const Iter &end);
     template<typename Iter>
-    requires IteratorCheck<Iter, T>
+    requires ForwardIterator<Iter>
     List(const Iter &begin, size_type count);
 
-    template <typename U, template<typename> class C>
-    requires ContainerClass<C<U>> && Convertable<T, U>
-    explicit List(const C<U> &container);
+    template <typename C>
+    requires ContainerClass<C> && std::convertible_to<typename C::value_type, T>
+    explicit List(const C &container);
 
 
     List(List<T> &&list);
@@ -109,9 +103,6 @@ public:
 
     auto operator<=>(const List<T>& other) const;
 
-    void print(void) const noexcept;
-    void debug_print(void) const noexcept;
-
     iterator begin(void);
     iterator end(void);
 
@@ -120,6 +111,9 @@ public:
 
     const_iterator cbegin(void) const;
     const_iterator cend(void) const;
+
+    template<Printable U>
+    friend std::ostream& operator<<(std::ostream& os, const List<U> &list);
 
     ~List() = default;
 

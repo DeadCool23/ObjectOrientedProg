@@ -12,7 +12,7 @@ extern "C" {
 }
 
 template <typename T>
-requires Comparable<T> && EmptyConstructable<T>
+requires EqualityComparable<T> && EmptyConstructable<T>
 class List;
 
 template <typename T>

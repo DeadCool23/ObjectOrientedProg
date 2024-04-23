@@ -48,7 +48,7 @@ std::shared_ptr<typename List<T>::ListNode> List<T>::ListNode::get_next(void) co
 };
 
 template<typename T>
-requires Comparable<T>
+requires EqualityComparable<T>
 bool List<T>::ListNode::operator==(const List<T>::ListNode &node) const {
     return this->next == node.next && this->get_ref() == node.get_ref();
 }

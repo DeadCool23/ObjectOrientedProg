@@ -33,56 +33,17 @@ List<T>::List(const std::initializer_list<T> &init) {
 }
 
 template <typename T>
-template <typename U, template<typename> class C>
-requires ContainerClass<C<U>> && Convertable<T, U>
-List<T>::List(const C<U> &container) {
+template <typename C>
+requires ContainerClass<C> && std::convertible_to<typename C::value_type, T>
+List<T>::List(const C &container) {
     this->clear();
     for (const auto &value : container)
         this->push_back(T(value));
 }
 
-template <typename T>
-List<T>::List(const iterator &beg, const iterator &end) {
-    this->clear();
-    for (auto it = beg; it != end; ++it)
-        this->push_back(*it);
-}
-
-template <typename T>
-List<T>::List(const iterator &beg, size_type count) {
-    this->clear();
-    
-    size_type i = 0;
-    for (auto it = beg; i++ < count && it; ++it)
-        this->push_back(*it);
-    
-    time_t now = time(NULL);
-    if (i < count)
-        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
-}
-
-template <typename T>
-List<T>::List(const const_iterator &beg, const const_iterator &end) {
-    this->clear();
-    for (auto it = beg; it != end; ++it)
-        this->push_back(*it);
-}
-
-template <typename T>
-List<T>::List(const const_iterator &beg, size_type count) {
-    this->clear();
-    size_type i = 0;
-    for (auto it = beg; i++ < count && it; ++it)
-        this->push_back(*it);
-    
-    time_t now = time(NULL);
-    if (i < count)
-        throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
-}
-
 template<typename T>
 template<typename Iter>
-requires IteratorCheck<Iter, T>
+requires ForwardIterator<Iter>
 List<T>::List(const Iter &beg, const Iter &end) {
     this->clear();
     size_type i = 0;
@@ -91,7 +52,7 @@ List<T>::List(const Iter &beg, const Iter &end) {
 }
 template<typename T>
 template<typename Iter>
-requires IteratorCheck<Iter, T>
+requires ForwardIterator<Iter>
 List<T>::List(const Iter &beg, size_type count) {
     this->clear();
     size_type i = 0;
@@ -366,7 +327,7 @@ void List<T>::insert(size_type index, const List<U> &list) {
 
 // --- Удаление ---
 template<typename T>
-requires Comparable<T>
+requires EqualityComparable<T>
 void List<T>::remove(const T &value) {
     bool is_del = false;
     if (this->head) {
@@ -436,7 +397,7 @@ List<T> &List<T>::operator+=(const List<U> &add_list) {
 }
 
 template<typename T>
-requires Comparable<T>
+requires EqualityComparable<T>
 template<typename U>
 requires Convertable<T, U>
 bool List<T>::operator==(const List<U> &add_list) {
@@ -452,7 +413,7 @@ bool List<T>::operator==(const List<U> &add_list) {
 }
 
 template<typename T> 
-requires Comparable<T>
+requires EqualityComparable<T>
 template<typename U>
 requires Convertable<T, U>
 bool List<T>::operator!=(const List<U> &add_list) {
@@ -467,21 +428,12 @@ auto List<T>::operator<=>(const List<T>& other) const {
 // --- Печать ---
 
 template<typename T>
-void List<T>::print(void) const noexcept {
-    std::cout << "{ ";
-    for (size_type i = 0; i < this->size(); ++i)
-        std::cout << (!i ? "" : ", ") << (/*const_cast<List<T>&>(*/*this/*)*/)[i];
-    std::cout << " }" << std::endl;
-}
-template<typename T>
-void List<T>::debug_print(void) const noexcept {
-    std::cout << "Size: " << _size << std::endl;
-    std::cout << "{" << std::endl;
-    for (size_type i = 0; i < this->size(); ++i){
-        std::cout << "  " << "[" << i << "]: " << (/*const_cast<List<T>&>(*/*this/*)*/)[i] << std::endl;
-
-    }
-    std::cout << "}" << std::endl;
+std::ostream& operator<<(std::ostream& os, const List<T> &list) {
+    os << "Size: " << list._size << std::endl;
+    os << "{" << std::endl;
+    for (Container::size_type i = 0; i < list._size; ++i)
+        os << "  " << "[" << i << "]: " << (/*const_cast<List<T>&>(*/list/*)*/)[i] << std::endl;
+    os << "}" << std::endl;
 }
 
 #pragma endregion
