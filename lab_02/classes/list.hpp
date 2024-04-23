@@ -16,12 +16,12 @@ template <typename T>
 List<T>::List(const T &value) { this->clear();push_back(value); }
 
 template <typename T>
-List<T>::List(size_t size, const T &value) {
+List<T>::List(size_type size, const T &value) {
     time_t now = time(NULL);
     if (size < 0) throw SizeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 
     this->clear();
-    for (size_t i = 0; i < size; ++i)
+    for (size_type i = 0; i < size; ++i)
         this->push_back(value);
 }
 
@@ -42,17 +42,17 @@ List<T>::List(const C<U> &container) {
 }
 
 template <typename T>
-List<T>::List(const iterator_type &beg, const iterator_type &end) {
+List<T>::List(const iterator &beg, const iterator &end) {
     this->clear();
     for (auto it = beg; it != end; ++it)
         this->push_back(*it);
 }
 
 template <typename T>
-List<T>::List(const iterator_type &beg, size_t count) {
+List<T>::List(const iterator &beg, size_type count) {
     this->clear();
     
-    size_t i = 0;
+    size_type i = 0;
     for (auto it = beg; i++ < count && it; ++it)
         this->push_back(*it);
     
@@ -62,16 +62,16 @@ List<T>::List(const iterator_type &beg, size_t count) {
 }
 
 template <typename T>
-List<T>::List(const const_iterator_type &beg, const const_iterator_type &end) {
+List<T>::List(const const_iterator &beg, const const_iterator &end) {
     this->clear();
     for (auto it = beg; it != end; ++it)
         this->push_back(*it);
 }
 
 template <typename T>
-List<T>::List(const const_iterator_type &beg, size_t count) {
+List<T>::List(const const_iterator &beg, size_type count) {
     this->clear();
-    size_t i = 0;
+    size_type i = 0;
     for (auto it = beg; i++ < count && it; ++it)
         this->push_back(*it);
     
@@ -85,16 +85,16 @@ template<typename Iter>
 requires IteratorCheck<Iter, T>
 List<T>::List(const Iter &beg, const Iter &end) {
     this->clear();
-    size_t i = 0;
+    size_type i = 0;
     for (auto it = beg; it != end; ++it)
         this->push_back(*it);
 }
 template<typename T>
 template<typename Iter>
 requires IteratorCheck<Iter, T>
-List<T>::List(const Iter &beg, size_t count) {
+List<T>::List(const Iter &beg, size_type count) {
     this->clear();
-    size_t i = 0;
+    size_type i = 0;
     for (auto it = beg; i++ < count && it; ++it)
         this->push_back(*it);
     
@@ -130,19 +130,19 @@ List<T>::List(const List<T> &list) {
 #pragma region Methods
 /* -------------------------------- Методы Списка ------------------------------ */
 template<typename T>
-Container::size_t List<T>::size(void) const { return _size; }
+Container::size_type List<T>::size(void) const { return _size; }
 
 template<typename T>
 bool List<T>::is_empty(void) const { return _size ? true : false; }
 
 // --- Индексация ---
 template<typename T>
-T& List<T>::operator[](size_t ind) {
+T& List<T>::operator[](size_type ind) {
     time_t now = time(NULL);
     if (ind >= _size)
         throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 
-    size_t i = 0;
+    size_type i = 0;
     for (auto &value : *this) {
         if (ind == i)
             return value;
@@ -151,12 +151,12 @@ T& List<T>::operator[](size_t ind) {
 }
 
 template<typename T>
-const T& List<T>::operator[](size_t ind) const {
+const T& List<T>::operator[](size_type ind) const {
     time_t now = time(NULL);
     if (ind >= _size)
         throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 
-    size_t i = 0;
+    size_type i = 0;
     for (auto &value : *this) {
         if (ind == i)
             return value;
@@ -262,7 +262,7 @@ T List<T>::pop_front(void) {
 }
 
 template<typename T>
-T List<T>::pop(size_t index) {
+T List<T>::pop(size_type index) {
     time_t now = time(NULL);
     if (!_size) throw SizeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 
@@ -276,7 +276,7 @@ T List<T>::pop(size_t index) {
         del_val = this->pop_back();
     } else {
         auto cur = this->head;
-        for (size_t i = 0; i < index - 1; ++i, cur = cur->get_next());
+        for (size_type i = 0; i < index - 1; ++i, cur = cur->get_next());
 
         del_val = cur->get_next()->get_ref();
         cur->set_next(cur->get_next()->get_next());
@@ -323,7 +323,7 @@ bool List<T>::find(const T &find_value) const noexcept {
 
 // --- Вставка ---
 template<typename T>
-void List<T>::insert(size_t index, const T &value) {
+void List<T>::insert(size_type index, const T &value) {
     time_t now = time(NULL);
     if (index > this->_size && index < 0)
         throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
@@ -334,7 +334,7 @@ void List<T>::insert(size_t index, const T &value) {
         this->push_back(value);
     } else {
         auto cur = this->head;
-        for (size_t i = 0; i < index - 1; ++i, cur = cur->get_next());
+        for (size_type i = 0; i < index - 1; ++i, cur = cur->get_next());
 
         std::shared_ptr<List<T>::ListNode> new_node = NodeAlloc(value);
         new_node->set_next(cur->get_next());
@@ -345,7 +345,7 @@ void List<T>::insert(size_t index, const T &value) {
 template<typename T>
 template<typename U>
 requires Convertable<T, U>
-void List<T>::insert(size_t index, const List<U> &list) {
+void List<T>::insert(size_type index, const List<U> &list) {
     time_t now = time(NULL);
     if (index > this->_size && index < 0)
         throw RangeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
@@ -356,7 +356,7 @@ void List<T>::insert(size_t index, const List<U> &list) {
         this->push_back(list);
     } else {
         auto cur = this->head;
-        for (size_t i = 0; i < index - 1; ++i, cur = cur->get_next());
+        for (size_type i = 0; i < index - 1; ++i, cur = cur->get_next());
 
         List<T> new_tree = List(list);
         new_tree->get_tail()->set_next(cur->get_next());
@@ -375,7 +375,7 @@ void List<T>::remove(const T &value) {
         this->pop_front();
     } else {
         auto cur = this->head;
-        for (size_t i = 1; !is_del && i < _size; ++i, cur = cur.get_next()) {
+        for (size_type i = 1; !is_del && i < _size; ++i, cur = cur.get_next()) {
             if ((*this)[i] == value) {
                 is_del = true;
                 cur->set_next(cur->get_next()->get_next());
@@ -389,11 +389,6 @@ void List<T>::remove(const T &value) {
 }
 
 // --- Операции ---
-template<typename T>
-void List<T>::each(const std::function<T(const T &value)> &func) {
-    std::transform(this->begin(), this->end(), this->begin(), [&](const T &val) { return func(val); });
-}
-
 template<typename T>
 List<T> &List<T>::operator=(List<T> &&list) {
     this->clear();
@@ -449,7 +444,7 @@ bool List<T>::operator==(const List<U> &add_list) {
     if (this->size() != add_list.size())
         is_equal = false;
 
-    for (size_t i = 0; is_equal && i < this->_size; ++i)
+    for (size_type i = 0; is_equal && i < this->_size; ++i)
         if ((*this)[i] != T(add_list[i]))
             is_equal = false;
     
@@ -474,7 +469,7 @@ auto List<T>::operator<=>(const List<T>& other) const {
 template<typename T>
 void List<T>::print(void) const noexcept {
     std::cout << "{ ";
-    for (size_t i = 0; i < this->size(); ++i)
+    for (size_type i = 0; i < this->size(); ++i)
         std::cout << (!i ? "" : ", ") << (/*const_cast<List<T>&>(*/*this/*)*/)[i];
     std::cout << " }" << std::endl;
 }
@@ -482,7 +477,7 @@ template<typename T>
 void List<T>::debug_print(void) const noexcept {
     std::cout << "Size: " << _size << std::endl;
     std::cout << "{" << std::endl;
-    for (size_t i = 0; i < this->size(); ++i){
+    for (size_type i = 0; i < this->size(); ++i){
         std::cout << "  " << "[" << i << "]: " << (/*const_cast<List<T>&>(*/*this/*)*/)[i] << std::endl;
 
     }
@@ -495,25 +490,25 @@ void List<T>::debug_print(void) const noexcept {
 /* ------------------------- Получение Итераторов -------------------------- */
 
 template<typename T>
-List<T>::iterator_type List<T>::begin(void) { return Iterator<T>(head); }
+List<T>::iterator List<T>::begin(void) { return Iterator<T>(head); }
 
 template<typename T>
-List<T>::iterator_type List<T>::end(void) {
+List<T>::iterator List<T>::end(void) {
     auto end_ptr = tail->get_next();
     return Iterator<T>(end_ptr, _size); 
 }
 
 template<typename T>
-List<T>::const_iterator_type List<T>::cbegin(void) const { return begin(); }
+List<T>::const_iterator List<T>::cbegin(void) const { return begin(); }
 
 template<typename T>
-List<T>::const_iterator_type List<T>::cend(void) const { return end(); }
+List<T>::const_iterator List<T>::cend(void) const { return end(); }
 
 template<typename T>
-List<T>::const_iterator_type List<T>::begin(void) const { return ConstIterator<T>(head); }
+List<T>::const_iterator List<T>::begin(void) const { return ConstIterator<T>(head); }
 
 template<typename T>
-List<T>::const_iterator_type List<T>::end(void) const {
+List<T>::const_iterator List<T>::end(void) const {
     auto end_ptr = tail->get_next();
     return ConstIterator<T>(end_ptr, _size); 
 }
@@ -528,13 +523,13 @@ template<typename T>
 std::shared_ptr<typename List<T>::ListNode> List<T>::get_tail(void) { return tail; }
 
 template<typename T>
-void List<T>::ListAllocate(size_t size) {
+void List<T>::ListAllocate(size_type size) {
     time_t now = time(NULL);
     if (size < 0) throw SizeError(__FILE__, typeid(*this).name(), __LINE__, ctime(&now));
 
     this->_size = size;
     std::shared_ptr<List<T>::ListNode> cur = nullptr;
-    for (size_t i = 0; i < size; ++i, cur = cur->get_next()) {
+    for (size_type i = 0; i < size; ++i, cur = cur->get_next()) {
         cur = NodeAlloc();
         if (!i) this->head = cur;
         this->tail = cur;

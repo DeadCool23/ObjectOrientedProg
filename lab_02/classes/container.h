@@ -7,7 +7,7 @@ extern "C" {
 
 class Container {
 public:
-    using size_t = std::size_t;
+    using size_type = std::size_t;
 
 public:
     Container(void) = default;
@@ -15,10 +15,10 @@ public:
 
     virtual ~Container(void) = default;
 
-    virtual size_t size(void) const = 0;
+    virtual size_type size(void) const = 0;
     virtual bool is_empty(void) const = 0;
 protected:
-    size_t _size = 0;
+    size_type _size = 0;
 };
 
 

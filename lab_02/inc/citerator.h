@@ -8,8 +8,7 @@
 #include "base_iterator.h"
 
 template <typename T>
-requires Comparable<T> && EmptyConstructable<T> &&
-         Divable<T> && Multable<T> && Printable<T>
+requires Comparable<T> && EmptyConstructable<T>
 class List;
 
 template <typename T>
