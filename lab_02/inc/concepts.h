@@ -81,7 +81,7 @@ template <typename T, typename U>
 concept DerivedFrom = std::is_base_of<U, T>::value;
 
 namespace IterConcepts {
-template <typename I>
+    template <typename I>
     concept InputIterator = 
         IteratorCheck<I> &&
         requires { typename I::iterator_category; } &&
