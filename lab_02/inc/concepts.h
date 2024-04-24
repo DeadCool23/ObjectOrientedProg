@@ -36,11 +36,13 @@ namespace MathConcepcts {
 template<typename T>
 concept EmptyConstructable = std::is_default_constructible_v<T>;
 
+template<typename _From, typename _To>
+concept ConvertableTo = std::convertible_to<_From, _To>;
+
 template<typename T, typename U>
-concept Convertable = requires (T a, U b) {
-    { T(b) } -> std::same_as<T>; 
-    { U(a) } -> std::same_as<U>;
-};
+concept Convertable = 
+    ConvertableTo<T, U> &&
+    ConvertableTo<U, T>;
 
 template<typename T>
 concept EqualityComparable = requires (T a, T b) {

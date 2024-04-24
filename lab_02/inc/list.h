@@ -40,13 +40,13 @@ public:
     List(const Iter &begin, size_type count);
 
     template <typename C>
-    requires ContainerClass<C> && std::convertible_to<typename C::value_type, T>
+    requires ContainerClass<C> && ConvertableTo<typename C::value_type, T>
     explicit List(const C &container);
 
 
     List(List<T> &&list);
     template <typename U>
-    requires Convertable<T, U>
+    requires ConvertableTo<U, T>
     List(const List<U> &list);
     List(const List<T> &list);
 
@@ -55,12 +55,12 @@ public:
 
     void push_back(const T &value);
     template<typename U>
-    requires Convertable<T, U>
+    requires ConvertableTo<U, T>
     void push_back(const List<U> &list);
 
     void push_front(const T &value);
     template<typename U>
-    requires Convertable<T, U>
+    requires ConvertableTo<U, T>
     void push_front(const List<U> &list);
     
     T pop_back(void);
@@ -73,7 +73,7 @@ public:
 
     void insert(size_type index, const T &value);
     template<typename U>
-    requires Convertable<T, U>
+    requires ConvertableTo<U, T>
     void insert(size_type index, const List<U> &list);
 
     void remove(const T &value);
@@ -83,24 +83,24 @@ public:
 
     List<T> &operator=(List<T> &&list);
     template<typename U>
-    requires Convertable<T, U>
+    requires ConvertableTo<U, T>
     List<T> &operator=(const List<U> &list);
     List<T> &operator=(const List<T> &list);
 
     template<typename U>
-    requires Convertable<T, U>
+    requires ConvertableTo<U, T>
     List<T> operator+(const List<U> &add_list) const;
     
     template<typename U>
-    requires Convertable<T, U>
+    requires ConvertableTo<U, T>
     List<T> &operator+=(const List<U> &add_list);
 
     template<typename U>
-    requires Convertable<T, U>
+    requires ConvertableTo<U, T>
     bool operator==(const List<U> &add_list);
 
     template<typename U>
-    requires Convertable<T, U>
+    requires ConvertableTo<U, T>
     bool operator!=(const List<U> &add_list);
 
     auto operator<=>(const List<T>& other) const;

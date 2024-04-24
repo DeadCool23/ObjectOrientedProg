@@ -34,7 +34,7 @@ List<T>::List(const std::initializer_list<T> &init) {
 
 template <typename T>
 template <typename C>
-requires ContainerClass<C> && std::convertible_to<typename C::value_type, T>
+requires ContainerClass<C> && ConvertableTo<typename C::value_type, T>
 List<T>::List(const C &container) {
     this->clear();
     for (const auto &value : container)
@@ -71,7 +71,7 @@ List<T>::List(List<T> &&list) : head(list.head), tail(list.tail) {
 
 template <typename T>
 template <typename U>
-requires Convertable<T, U>
+requires ConvertableTo<U, T>
 List<T>::List(const List<U> &list) {
     this->clear();
     for (const auto &value : list)
@@ -142,7 +142,7 @@ void List<T>::push_back(const T &value) {
 
 template<typename T>
 template<typename U>
-requires Convertable<T, U>
+requires ConvertableTo<U, T>
 void List<T>::push_back(const List<U> &list) {
     for (auto &value : list)
         this->push_back(T(value));
@@ -165,7 +165,7 @@ void List<T>::push_front(const T &value) {
 
 template<typename T>
 template<typename U>
-requires Convertable<T, U>
+requires ConvertableTo<U, T>
 void List<T>::push_front(const List<U> &list) {
     List<T> front_list;
     for (auto &value : list)
@@ -305,7 +305,7 @@ void List<T>::insert(size_type index, const T &value) {
 
 template<typename T>
 template<typename U>
-requires Convertable<T, U>
+requires ConvertableTo<U, T>
 void List<T>::insert(size_type index, const List<U> &list) {
     time_t now = time(NULL);
     if (index > this->_size && index < 0)
@@ -361,7 +361,7 @@ List<T> &List<T>::operator=(List<T> &&list) {
 
 template<typename T>
 template<typename U>
-requires Convertable<T, U>
+requires ConvertableTo<U, T>
 List<T> &List<T>::operator=(const List<U> &list) {
 
     auto tmp = List<T>(list);
@@ -379,7 +379,7 @@ List<T> &List<T>::operator=(const List<T> &list) {
 
 template<typename T>
 template<typename U>
-requires Convertable<T, U>
+requires ConvertableTo<U, T>
 List<T> List<T>::operator+(const List<U> &add_list) const {
     List<T> tmp;
     tmp.push_back(*this);  
@@ -390,7 +390,7 @@ List<T> List<T>::operator+(const List<U> &add_list) const {
 
 template<typename T>
 template<typename U>
-requires Convertable<T, U>
+requires ConvertableTo<U, T>
 List<T> &List<T>::operator+=(const List<U> &add_list) {
     *this = *this + add_list;
     return *this;
@@ -399,7 +399,7 @@ List<T> &List<T>::operator+=(const List<U> &add_list) {
 template<typename T>
 requires EqualityComparable<T>
 template<typename U>
-requires Convertable<T, U>
+requires ConvertableTo<U, T>
 bool List<T>::operator==(const List<U> &add_list) {
     bool is_equal = true;
     if (this->size() != add_list.size())
@@ -415,7 +415,7 @@ bool List<T>::operator==(const List<U> &add_list) {
 template<typename T> 
 requires EqualityComparable<T>
 template<typename U>
-requires Convertable<T, U>
+requires ConvertableTo<U, T>
 bool List<T>::operator!=(const List<U> &add_list) {
     return !(*this == add_list);
 }
