@@ -413,7 +413,7 @@ bool List<T>::operator==(const List<U> &add_list) {
 }
 
 template<typename T> 
-auto List<T>::operator<=>(const List<T>& other) const {
+std::strong_ordering List<T>::operator<=>(const List<T>& other) const {
     return _size <=> other._size;
 }
 

@@ -4,6 +4,7 @@
 #include <exception>
 
 extern "C" {
+    #include <stdio.h>
     #include <string.h>
     #include <stdlib.h>
 }
@@ -11,14 +12,13 @@ extern "C" {
 class BaseError: public std::exception {
     public:
         BaseError(const char *filename, const char *classname, int line, const char *time, const char *info = "Undefined") {
-            strcpy(error_info, "");
-            strcat(error_info, "\nFile name: "); strcat(error_info, filename);
-            strcat(error_info, "\nClass: "); strcat(error_info, classname);
-            char sline[10];
-            itoa(line, sline, 10);
-            strcat(error_info, "\nLine: "); strcat(error_info, sline);
-            strcat(error_info, "\nTime: "); strcat(error_info, time);
-            strcat(error_info, "\nERROR: "); strcat(error_info, info);
+            snprintf(error_info, 1023,
+                    "\nFilename: %s \
+                    \nClass: %s \
+                    \nLine: %d \
+                    \nTime: %s \
+                    \nERROR: %s", 
+                    filename, classname, line, time, info);
         }
 
         virtual const char* what() const noexcept override {

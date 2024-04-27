@@ -50,6 +50,12 @@ public:
     List(const List<U> &list);
     List(const List<T> &list);
 
+    List<T> &operator=(List<T> &&list);
+    template<typename U>
+    requires ConvertableTo<U, T>
+    List<T> &operator=(const List<U> &list);
+    List<T> &operator=(const List<T> &list);
+
     bool is_empty() const override;
     size_type size(void) const override;
 
@@ -81,12 +87,6 @@ public:
     T& operator[](size_type ind);
     const T& operator[](size_type ind) const;
 
-    List<T> &operator=(List<T> &&list);
-    template<typename U>
-    requires ConvertableTo<U, T>
-    List<T> &operator=(const List<U> &list);
-    List<T> &operator=(const List<T> &list);
-
     template<typename U>
     requires ConvertableTo<U, T>
     List<T> operator+(const List<U> &add_list) const;
@@ -99,7 +99,7 @@ public:
     requires ConvertableTo<U, T>
     bool operator==(const List<U> &add_list);
 
-    auto operator<=>(const List<T>& other) const;
+    std::strong_ordering operator<=>(const List<T>& other) const;
 
     iterator begin(void);
     iterator end(void);
