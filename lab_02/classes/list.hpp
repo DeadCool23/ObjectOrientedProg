@@ -413,21 +413,13 @@ bool List<T>::operator==(const List<U> &add_list) {
 }
 
 template<typename T> 
-requires EqualityComparable<T>
-template<typename U>
-requires ConvertableTo<U, T>
-bool List<T>::operator!=(const List<U> &add_list) {
-    return !(*this == add_list);
-}
-
-template<typename T> 
 auto List<T>::operator<=>(const List<T>& other) const {
     return _size <=> other._size;
 }
 
 // --- Печать ---
 
-template<Printable T>
+template<typename T>
 std::ostream& operator<<(std::ostream& os, const List<T> &list) {
     os << "Size: " << list._size << std::endl;
     os << "{" << std::endl;

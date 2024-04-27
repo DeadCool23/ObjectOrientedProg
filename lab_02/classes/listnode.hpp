@@ -12,7 +12,7 @@ template<typename T>
 List<T>::ListNode::ListNode(List<T>::ListNode &&node) : value(node.next), next(node.next) {}
 
 template<typename T>
-List<T>::ListNode::ListNode(const List<T>::ListNode &node) :value(node), next(node.next) {}
+List<T>::ListNode::ListNode(const List<T>::ListNode &node) : value(node), next(node.next) {}
 
 template<typename T>
 List<T>::ListNode::ListNode(const std::shared_ptr<List<T>::ListNode> &node) {
@@ -52,20 +52,11 @@ requires EqualityComparable<T>
 bool List<T>::ListNode::operator==(const List<T>::ListNode &node) const {
     return this->next == node.next && this->get_ref() == node.get_ref();
 }
-template<typename T>
-bool List<T>::ListNode::operator!=(const List<T>::ListNode &node) const {
-    return !(*this == node);
-}
 
 
 template<typename T>
 bool List<T>::ListNode::operator==(const std::shared_ptr<typename List<T>::ListNode> &node) const {
     return this == node;
-}
-
-template<typename T>
-bool List<T>::ListNode::operator!=(const std::shared_ptr<typename List<T>::ListNode> &node) const {
-    return !(this == node);
 }
 
 #endif // __LISTNODE_HPP__

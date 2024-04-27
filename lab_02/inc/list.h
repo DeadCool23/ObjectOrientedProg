@@ -99,10 +99,6 @@ public:
     requires ConvertableTo<U, T>
     bool operator==(const List<U> &add_list);
 
-    template<typename U>
-    requires ConvertableTo<U, T>
-    bool operator!=(const List<U> &add_list);
-
     auto operator<=>(const List<T>& other) const;
 
     iterator begin(void);
@@ -114,7 +110,7 @@ public:
     const_iterator cbegin(void) const;
     const_iterator cend(void) const;
 
-    template<Printable U>
+    template<typename U>
     friend std::ostream& operator<<(std::ostream& os, const List<U> &list);
 
     ~List() = default;
@@ -142,10 +138,7 @@ protected:
         std::shared_ptr<ListNode> get_next(void) const;
 
         bool operator == (const ListNode &node) const;
-        bool operator != (const ListNode &node) const;
-
         bool operator == (const std::shared_ptr<ListNode> &node) const;
-        bool operator != (const std::shared_ptr<ListNode> &node) const;
 
         ~ListNode() = default;
 

@@ -16,7 +16,7 @@ class BaseError: public std::exception {
             strcat(error_info, "\nClass: "); strcat(error_info, classname);
             char sline[10];
             itoa(line, sline, 10);
-            strcat(error_info, "\nClass: "); strcat(error_info, sline);
+            strcat(error_info, "\nLine: "); strcat(error_info, sline);
             strcat(error_info, "\nTime: "); strcat(error_info, time);
             strcat(error_info, "\nERROR: "); strcat(error_info, info);
         }

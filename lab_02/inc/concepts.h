@@ -97,7 +97,4 @@ namespace IterConcepts {
         DerivedFrom<typename I::iterator_category, std::forward_iterator_tag>;
 }
 
-template <typename T>
-concept Printable = requires (T a, std::ostream os) { os << a; };
-
 #endif // __CONCEPTS_HPP__
