@@ -33,10 +33,10 @@ public:
     List(const std::initializer_list<T> &init);
 
     template<typename Iter>
-    requires ForwardIterator<Iter>
+    requires ForwardIterator<Iter> && ConvertableTo<typename Iter::value_type, T>
     List(const Iter &begin, const Iter &end);
     template<typename Iter>
-    requires ForwardIterator<Iter>
+    requires ForwardIterator<Iter> && ConvertableTo<typename Iter::value_type, T>
     List(const Iter &begin, size_type count);
 
     template <typename C>

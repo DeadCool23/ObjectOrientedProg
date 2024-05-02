@@ -43,7 +43,7 @@ List<T>::List(const C &container) {
 
 template<typename T>
 template<typename Iter>
-requires ForwardIterator<Iter>
+requires ForwardIterator<Iter> && ConvertableTo<typename Iter::value_type, T>
 List<T>::List(const Iter &beg, const Iter &end) {
     this->clear();
     size_type i = 0;
@@ -52,7 +52,7 @@ List<T>::List(const Iter &beg, const Iter &end) {
 }
 template<typename T>
 template<typename Iter>
-requires ForwardIterator<Iter>
+requires ForwardIterator<Iter> && ConvertableTo<typename Iter::value_type, T>
 List<T>::List(const Iter &beg, size_type count) {
     this->clear();
     size_type i = 0;
